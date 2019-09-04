@@ -8,18 +8,17 @@ redirect_from:
   - /about.html
 ---
 
-I am a Ph.D. student with the College of Computer, National University of Defense Technology (NUDT). I was visiting the Advanced Analytics Institute, University of Technology Sydney (UTS) during 09/2016-09/2018 and working with Professor Longbing Cao. I pursued my doctoral study in advance at NUDT in 2015 and I got my Bachalor Degree at NUDT in 2013. 
+I am a graduate student with the School of Data and Computer Science (SDCS), Sun Yat-sen University (SYSU). I got my Bachalor Degree at SYSU in 2017.
 
 Research
 ========
 
-My research interests include machine learning, representation learning, data mining, recommender systems, network representation.
+My current research interest is mainly on using deep learning techniques to solve recommendation and other graph-based problems. I am also highly interested in GANs, multi-agent reinforcement learning and its application on various areas.
 
 News
 =======
-* Two papers on network representation and recommender system have been accepted by AAAI 2019.
-* Our paper on categorical data representation was accepted by TKDE.
-* We presented tutorial on PAKDD 2018 at Melbourne, Australia.
+* One papers on recommender systems have been accepted by AAAI 2019.
+* Our paper on serendipitous recommendation was accepted by TCYB.
 
 
 
