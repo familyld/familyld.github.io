@@ -8,12 +8,12 @@ redirect_from:
   - /about.html
 ---
 
-I am a graduate student with the School of Data and Computer Science (SDCS), Sun Yat-sen University (SYSU). I got my Bachalor Degree at SYSU in 2017.
+I am a graduate student with the School of Data and Computer Science (SDCS), Sun Yat-sen University (SYSU). I got my Bachalor Degree at SYSU in 2017. [[CV]](http://familyld.github.io/files/CV_Zhi-Hong Deng.pdf)
 
 Research
 ========
 
-My current research interest is mainly on using deep learning techniques to solve recommendation and other graph-based problems. I am also highly interested in GANs, multi-agent reinforcement learning and its application on various areas.
+My current research interest is mainly on using deep learning techniques to solve recommendation and other graph-based problems. I am also highly interested in GANs, multi-agent reinforcement learning and their application on various areas.
 
 News
 =======

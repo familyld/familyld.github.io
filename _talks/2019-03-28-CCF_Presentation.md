@@ -3,7 +3,7 @@ title: "DeepCF: A Unified Framework of Representation Learning and Matching Func
 collection: talks
 type: "Presentation"
 permalink: /talks/2018-02-03-AAAI_tutorial
-venue: "CCF-2019粤港澳大湾区研究生学术论坛"
+venue: "2019粤港澳大湾区研究生学术论坛"
 date: 2019-03-28
 location: "Guangzhou, China"
 ---
