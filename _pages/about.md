@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a graduate student with the School of Data and Computer Science (SDCS), Sun Yat-sen University (SYSU). I got my Bachalor Degree at SYSU in 2017. [[Visit my CV]](http://familyld.github.io/files/CV_Zhi-HongDeng.pdf)
+I am a graduate student with the School of Data and Computer Science (SDCS), Sun Yat-sen University (SYSU). I got my Bachalor Degree at SYSU in 2017. [[Visit my CV]](http://2wildkids.com/files/CV_Zhi-HongDeng.pdf)
 
 Research
 ========
