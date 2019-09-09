@@ -17,8 +17,8 @@ My current research interest is mainly on using deep learning techniques to solv
 
 News
 =======
-* One papers on recommender systems have been accepted by AAAI 2019 (Oral).
-* Our paper on serendipitous recommendation was accepted by TCYB (SCI Q1).
+* One papers on recommender systems have been accepted by AAAI 2019 (**Oral**).
+* Our paper on serendipitous recommendation was accepted by TCYB (**SCI Q1**).
 
 
 
