@@ -13,7 +13,7 @@ I am a graduate student with the School of Data and Computer Science (SDCS), Sun
 Research
 ========
 
-My current research interest is mainly on using deep learning techniques to solve recommendation and other graph-based problems. I am also highly interested in GANs, multi-agent reinforcement learning and their application on various areas.
+My current research interest is mainly on using deep learning techniques to solve recommendation and other graph-based problems. I am also highly interested in GANs, reinforcement learning and their application on various areas.
 
 News
 =======
