@@ -59,6 +59,14 @@ a {
     font-size: 64px;
 }
 
+#clock2 {
+    margin-bottom: 16px;
+}
+
+#clock2 .digit {
+    font-size: 32px;
+}
+
 #canvas2 {
     margin: 0 auto;
     width: 1100px;

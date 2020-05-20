@@ -64,6 +64,7 @@
                 <canvas id="canvas" width="400" height="300"></canvas>
             </div>
             <div id="clock-box">
+                <div id="clock2"></div>
                 <a href="http://force4us.com/2016/04/20/To-Yuqian-Chen/" target="_blank">@林肯</a> 与 <a href="http://force4us.com/2016/04/20/To-Yuqian-Chen/" target="_blank">@小轩</a> 在一起的
                 <div id="clock"></div>
             </div>
@@ -247,6 +248,7 @@
             $(document).ready(function() { new Enjine.Application().Initialize(new Mario.LoadingState(), 320, 240) });
             $("#clock-box").fadeIn(500);
             while (true) {
+                timeDisplay();
                 timeElapse(together);
                 $await(Jscex.Async.sleep(1000)); // 每秒更新一次#clock-box
             }

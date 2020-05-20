@@ -58,3 +58,15 @@ function timeElapse(date){
 	var result = "第 <span class=\"digit\">" + days + "</span> 天 <span class=\"digit\">" + hours + "</span> 小时 <span class=\"digit\">" + minutes + "</span> 分钟 <span class=\"digit\">" + seconds + "</span> 秒";
 	$("#clock").html(result);
 }
+
+function timeDisplay(){
+	var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth()+1;
+    var date = now.getDate();
+    var hour = now.getHours();//得到小时
+    var min = now.getMinutes();//得到分钟
+    var sec = now.getSeconds();//得到秒
+	var result = "现在是 <span class=\"digit\">" + year + "</span> 年 <span class=\"digit\">" + month + "</span> 月 <span class=\"digit\">" + date + "</span> 日 <span class=\"digit\">" + hour + "</span> 点 <span class=\"digit\">" + min + "</span> 分";
+	$("#clock2").html(result);
+}
