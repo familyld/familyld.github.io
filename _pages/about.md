@@ -10,9 +10,9 @@ redirect_from:
 
 I am a visiting scholar at the Southern University of Science and Technology (SUSTech), working with [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang) and [Prof. Xuan Song](https://www.sustech.edu.cn/zh/songxuan.html). I received my Master's Degree and Bachelor's Degree from the School of Data and Computer Science, Sun Yat-sen University (SYSU) in 2017 and 2013 respectively, under the supervision of [Prof. Chang-Dong Wang](http://www.scholat.com/changdongwang.cn). 
 
-- [[Visit my CV]](http://2wildkids.com/files/CV_Zhi-HongDeng.pdf)
-- [[Github]](https://github.com/familyld)
-- [[Zhihu]](https://www.zhihu.com/people/Zhi-Hong.Deng)
+- 👨‍🎓 [CV](http://2wildkids.com/files/CV_Zhi-HongDeng.pdf)
+- 🌵 [Github](https://github.com/familyld)
+- 📘 [Zhihu](https://www.zhihu.com/people/Zhi-Hong.Deng)
 
 Research
 ========
@@ -21,7 +21,7 @@ My current research interest is mainly on solving real-world challenges of Deep 
 
 News
 =======
-* One papers on recommender systems have been accepted by AAAI 2019 (**Oral**).
+* One papers on deep learning-based recommender systems have been accepted by AAAI 2019 (**Oral**).
 * Our paper on serendipitous recommendation was accepted by TCYB (**SCI Q1**).
 
 
