@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a visiting scholar at the Southern University of Science and Technology (SUSTech), working with [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang) and [Prof. Xuan Song](https://www.sustech.edu.cn/zh/songxuan.html). In 2021, I will join the University of Technology Sydney (UTS) as a PhD student, supervised by [Prof. Chengqi Zhang](https://www.uts.edu.au/staff/chengqi.zhang) and [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang). I received my Master's Degree and Bachelor's Degree from the School of Data and Computer Science, Sun Yat-sen University (SYSU) in 2017 and 2013 respectively, under the supervision of [Prof. Chang-Dong Wang](http://www.scholat.com/changdongwang.cn). 
+I am a visiting scholar at the Southern University of Science and Technology (SUSTech), working with [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang) and [Prof. Xuan Song](https://www.sustech.edu.cn/zh/songxuan.html). In 2021, I will join the University of Technology Sydney (UTS) as a PhD student, supervised by [Prof. Chengqi Zhang](https://www.uts.edu.au/staff/chengqi.zhang) and [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang). I received my Master's Degree and Bachelor's Degree from the School of Data and Computer Science, Sun Yat-sen University (SYSU) in 2020 and 2017 respectively, under the supervision of [Prof. Chang-Dong Wang](http://www.scholat.com/changdongwang.cn). 
 
 - 👨‍🎓 [CV](http://2wildkids.com/files/CV_Zhi-HongDeng.pdf)
 - 🌵 [Github](https://github.com/familyld)
