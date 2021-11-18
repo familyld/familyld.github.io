@@ -17,11 +17,13 @@ I am a PhD student at the University of Technology Sydney (UTS), supervised by [
 Research
 ========
 
-My current research interest is mainly on solving real-world challenges of Deep Reinforcement Learning (DRL), especially offline reinforcement learning. I am also highly interested in the application of DRL in various areas, e.g., recommender systems and dialog systems. 
+My current research interests center on the design of practical reinforcement learning algorithms. Among various research topics, I am particularly interested in offline reinforcement learning and causal reinforcement learning. Also, I am actively looking for opportunities to use these algorithms to solve real-world decision-making problems, e.g., personalized recommendations.
 
 News
 =======
-* One papers on deep learning-based recommender systems have been accepted by AAAI 2019 (**Oral**).
+* One new paper on offline RL is on [arxiv](https://arxiv.org/abs/2110.12468) now.
+* One paper on session-based recommender systems has submitted to TNNLS (**SCI Q1**) for the second round of review.
+* One paper on deep learning-based recommender systems has been accepted by AAAI 2019 (**Oral**).
 * Our paper on serendipitous recommendation was accepted by TCYB (**SCI Q1**).
 
 
