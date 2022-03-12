@@ -22,7 +22,8 @@ My current research interests center on the design of practical reinforcement le
 News
 =======
 * One new paper on offline RL is on [arxiv](https://arxiv.org/abs/2110.12468) now.
-* One paper on session-based recommender systems has been submitted to TNNLS (**SCI Q1**) for the second round of review.
+* One paper on offline RL has been accepted by ICLR 2022 (**Spotlight**).
+* One paper on session-based recommender systems has been accepted by TNNLS (**SCI Q1**).
 * One paper on deep learning-based recommender systems has been accepted by AAAI 2019 (**Oral**).
 * Our paper on serendipitous recommendation was accepted by TCYB (**SCI Q1**).
 
