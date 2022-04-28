@@ -7,10 +7,10 @@
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Zhi-Hong Deng's Homepage"
+title                    : "Zhihong Deng's Homepage"
 title_separator          : "-"
-name                     : &name "Zhi-Hong Deng"
-description              : &description "ML/DM/IR"
+name                     : &name "Zhihong Deng"
+description              : &description "RL/DM/IR"
 url                      : https://familyld.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "familyld.github.io"
@@ -78,7 +78,7 @@ analytics:
 
 # Site Author
 author:
-  name             : "Zhi-Hong Deng<br/>（邓智鸿）"
+  name             : "Zhihong Deng<br/>（邓智鸿）"
   avatar           : "profile.jpg"
   bio              : "PhD Student at UTS"
   location         : "Guangzhou"

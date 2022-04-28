@@ -10,14 +10,15 @@ redirect_from:
 
 I am a PhD student at the University of Technology Sydney (UTS), supervised by [Prof. Chengqi Zhang](https://www.uts.edu.au/staff/chengqi.zhang) and [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang). Before joining UTS, I was a visiting scholar at the Southern University of Science and Technology (SUSTech), working with [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang) and [Prof. Xuan Song](https://www.sustech.edu.cn/zh/songxuan.html). I received my Master's Degree and Bachelor's Degree from the School of Data and Computer Science, Sun Yat-sen University (SYSU) in 2020 and 2017 respectively, under the supervision of [Prof. Chang-Dong Wang](http://www.scholat.com/changdongwang.cn). 
 
-- 👨‍🎓 [CV](http://2wildkids.com/files/CV_Zhi-HongDeng.pdf)
+- 👨‍🎓 [CV](http://2wildkids.com/files/CV_ZhihongDeng.pdf)
 - 🌵 [Github](https://github.com/familyld)
 - 📘 [Zhihu](https://www.zhihu.com/people/Zhi-Hong.Deng)
+- 🎓 [Google Scholar](https://scholar.google.com.au/citations?user=e8D8_NwAAAAJ)
 
 Research
 ========
 
-My current research interests center on the design of practical reinforcement learning algorithms. Among various research topics, I am particularly interested in offline reinforcement learning and causal reinforcement learning. Also, I am actively looking for opportunities to use these algorithms to solve real-world decision-making problems, e.g., personalized recommendations.
+My current research interests center on what, why, and how causal knowledge can be incorporated into reinforcement learning (RL). Many open problems in RL are related to causality, e.g., sample efficiency, generalization, and spurious correlation. Agents equipped with causal knowledge can effectively address these problems and unlock the full potential of RL algorithms. I am also actively looking for opportunities to apply these algorithms to solve real-world problems, e.g., robotics and personalized recommendation.
 
 News
 =======
