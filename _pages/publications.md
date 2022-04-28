@@ -19,5 +19,5 @@ author_profile: true
   * **Zhi-Hong Deng**, Ling Huang, Chang-Dong Wang, Jian-Huang Lai, Philip S. Yu. "DeepCF: A Unified Framework of Representation Learning and Matching Function Learning in Recommender System." AAAI 2019. [[**Slides**]](https://familyld.github.io/files/AAAI2019-DeepCF.pdf) [[Paper]](https://familyld.github.io/files/19AAAI_DeepCF.pdf) [[Code]](https://github.com/familyld/DeepCF)
 
 * ArXiv
-  * Zhihong Deng, Zuyue Fu, Lingxiao Wang, Zhuoran Yang, Chenjia Bai, Zhaoran Wang, Jing Jiang. "SCORE: Spurious COrrelation REduction for Offline Reinforcement Learning." Oct, 2021. [[Paper]](https://arxiv.org/pdf/2110.12468.pdf)
-  * Zi-Yuan Hu, Jin Huang, Zhi-Hong Deng, Chang-Dong Wang, Ling Huang, Jian-Huang Lai, Philip S Yu. "BCFNet: A Balanced Collaborative Filtering Network with Attention Mechanism." Mar, 2021. [[Paper]](https://arxiv.org/pdf/2103.06105.pdf)
+  * **Zhihong Deng**, Zuyue Fu, Lingxiao Wang, Zhuoran Yang, Chenjia Bai, Zhaoran Wang, Jing Jiang. "SCORE: Spurious COrrelation REduction for Offline Reinforcement Learning." Oct, 2021. [[Paper]](https://arxiv.org/pdf/2110.12468.pdf)
+  * Zi-Yuan Hu, Jin Huang, **Zhi-Hong Deng**, Chang-Dong Wang, Ling Huang, Jian-Huang Lai, Philip S Yu. "BCFNet: A Balanced Collaborative Filtering Network with Attention Mechanism." Mar, 2021. [[Paper]](https://arxiv.org/pdf/2103.06105.pdf)
