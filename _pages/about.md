@@ -18,10 +18,11 @@ I am a PhD student at the University of Technology Sydney (UTS), supervised by [
 Research
 ========
 
-My current research interests center on what, why, and how causal knowledge can be incorporated into reinforcement learning (RL). Many open problems in RL are related to causality, e.g., sample efficiency, generalization, and spurious correlation. Agents equipped with causal knowledge can effectively address these problems and unlock the full potential of RL algorithms. I am also actively looking for opportunities to apply these algorithms to solve real-world problems, e.g., robotics and personalized recommendation.
+My current research interests center on what, why, and how causal knowledge can be incorporated into reinforcement learning (RL). Many open problems in RL are closely related to causality, e.g., sample efficiency, generalization, and spurious correlation. Equipping RL algorithms with causal knowledge can effectively address these problems. I am also actively seeking opportunities to apply these algorithms to solve real-world problems.
 
 News
 =======
+* One survey paper on causal reinforcement learning is coming soon!
 * One new paper on offline RL is on [arxiv](https://arxiv.org/abs/2110.12468) now.
 * One paper on offline RL has been accepted by ICLR 2022 (**Spotlight**).
 * One paper on session-based recommender systems has been accepted by TNNLS (**SCI Q1**).
