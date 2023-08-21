@@ -23,7 +23,8 @@ My current research focuses on causal reinforcement learning (RL),  an emerging 
 News
 =======
 
-* Our survey paper on causal reinforcement learning is now available on [arxiv](https://arxiv.org/abs/2307.01452)!
+* We just present a tutorial on causal reinforcement learning at [ADMA 2023](https://adma2023.uqcloud.net/index.html). Check the [PPT](https://2wildkids.com/files/ADMA3 Tutorial - Causal Reinforcement Learning - Zhihong Deng) here.
+* Our survey paper on causal reinforcement learning is now available on [arxiv](https://arxiv.org/abs/2307.01452).
 * One new paper on offline RL is on [arxiv](https://arxiv.org/abs/2110.12468) now.
 * One paper on offline RL has been accepted by ICLR 2022 (**Spotlight**).
 * One paper on session-based recommender systems has been accepted by TNNLS (**SCI Q1**).
