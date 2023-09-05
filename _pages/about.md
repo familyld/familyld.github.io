@@ -14,6 +14,7 @@ I am a PhD student at the University of Technology Sydney (UTS), supervised by [
 - 📘 [Zhihu](https://www.zhihu.com/people/Zhi-Hong.Deng)
 - 🌵 [Github](https://github.com/familyld)
 - 👨‍🎓 [CV](http://2wildkids.com/files/CV_ZhihongDeng.pdf)
+- 🤝 [Linkedin](https://www.linkedin.com/in/zhihong-deng-111745256/)
 
 Research
 ========
