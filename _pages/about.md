@@ -19,11 +19,12 @@ I am a PhD student at the University of Technology Sydney (UTS), supervised by [
 Research
 ========
 
-My current research focuses on causal reinforcement learning (RL),  an emerging subfield of RL that incorporates prior knowledge and assumptions to analyze the underlying causal mechanisms of actions and their consequences. By harnessing causal relationships, RL agents gain insights into complex environments and tasks, facilitating informed decision-making. *If you share my enthusiasm for this exciting topic and are interested in collaboration or exploring research ideas, please feel free to [reach out to me](zhi-hong.deng@student.uts.edu.au)！*  😉
+My current research focuses on causal reinforcement learning (RL),  an emerging subfield of RL that incorporates prior knowledge and assumptions to analyze the underlying causal mechanisms of actions and their consequences. By harnessing causal relationships, agents gain insights into complex environments and tasks, facilitating informed decision-making. *If you share my enthusiasm for this exciting topic and are interested in collaboration or exploring research ideas, please feel free to [reach out to me](zhi-hong.deng@student.uts.edu.au)！*  😉
 
 News
 =======
 
+* Our paper on offline RL is accepted by [IEEE Transactions on Pattern Analysis and Machine Intelligence](https://ieeexplore.ieee.org/document/10301548/) (**CORE A\*, IF=24.314**)!
 * We just present a tutorial on causal reinforcement learning at [ADMA 2023](https://adma2023.uqcloud.net/index.html). Please check our [presentation](https://2wildkids.com/files/ADMA2023-Tutorial-CausalRL-ZhihongDeng.pdf) here.
 * Our survey paper on causal reinforcement learning is now available on [arxiv](https://arxiv.org/abs/2307.01452).
 * One new paper on offline RL is on [arxiv](https://arxiv.org/abs/2110.12468) now.

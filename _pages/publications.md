@@ -11,6 +11,7 @@ author_profile: true
 
 {% include base_path %}
 * Journal papers
+  * **Zhihong Deng**, Zuyue Fu, Lingxiao Wang, Zhuoran Yang, Chenjia Bai, Tianyi Zhou, Zhaoran Wang, Jing Jiang. "False Correlation Reduction for Offline Reinforcement Learning." IEEE Transactions on Pattern Analysis and Machine Intelligence (2023). [[Paper]](http://familyld.github.io/files/23TPAMI_SCORE.pdf) [[Code]](https://github.com/familyld/SCORE)
   *  **Zhi-Hong Deng**, Chang-Dong Wang, Ling Huang, Jian-Huang Lai, Philip S. Yu. "G^3SR: Global Graph Guided Session-Based Recommendation." IEEE Transactions on Neural Networks and Learning Systems (2022). [[Paper]](http://familyld.github.io/files/22TNNLS_G3SR.pdf) [[Code]](https://github.com/familyld/G3SR)
   *  Chang-Dong Wang, **Zhi-Hong Deng**, Jian-Huang Lai, Philip S. Yu. "Serendipitous Recommendation in E-Commerce Using Innovator-Based Collaborative Filtering." IEEE Transactions on Cybernetics (2019). [[Paper]](https://familyld.github.io/files/19TCYB_INVBCF.pdf) 
 
