@@ -34,7 +34,3 @@ My current research focuses on causal reinforcement learning (RL), an emerging r
 * One paper on session-based recommender systems has been accepted by TNNLS (**CORE A\***).
 * One paper on deep learning-based recommender systems has been accepted by AAAI 2019 (**CORE A\*, Oral**).
 * Our paper on serendipitous recommendation was accepted by TCYB (**CORE A**).
-
-📑 Research
-========
-
