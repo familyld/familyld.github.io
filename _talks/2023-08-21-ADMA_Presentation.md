@@ -3,7 +3,7 @@ title: "Causal Reinforcement Learning: Empowering Agents with Causality"
 collection: talks
 type: "Presentation"
 permalink: /talks/2023-08-21-ADMA_tutorial
-venue: "International Conference Advanced Data Mining and Applications 2023"
+venue: "International Conference on Advanced Data Mining and Applications 2023"
 date: 2023-08-21
 location: "Shenyang, China"
 ---
