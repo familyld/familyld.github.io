@@ -17,6 +17,7 @@ author_profile: true
   *  Chang-Dong Wang, **Zhi-Hong Deng**, Jian-Huang Lai, Philip S. Yu. "Serendipitous Recommendation in E-Commerce Using Innovator-Based Collaborative Filtering." IEEE Transactions on Cybernetics (2019) (<font color='red'>CORE A</font>, **IF=11.8**). [[Paper]](https://familyld.github.io/files/19TCYB_INVBCF.pdf) 
 
 * Conference papers
+  * **Zhihong Deng**, Jing Jiang, Guodong Long, Chengqi Zhang. "What Hides behind Unfairness? Exploring Dynamics Fairness in Reinforcement Learning." IJCAI 2024 (<font color='red'>CORE A*</font>). [[Paper]](https://familyld.github.io/files/24IJCAI_InsightFair.pdf) [[Code]](https://github.com/familyld/InsightFair)
   * Chenjia Bai, Lingxiao Wang, Zhuoran Yang, **Zhihong Deng**, Animesh Garg, Peng Liu, Zhaoran Wang. "Pessimistic Bootstrapping for Uncertainty-Driven Offline Reinforcement Learning." ICLR 2022 (<font color='red'>CORE A*</font>, **Spotlight**). [[Paper]](https://familyld.github.io/files/22ICLR_PBRL.pdf) [[Code]](https://github.com/Baichenjia/PBRL)
   * **Zhi-Hong Deng**, Ling Huang, Chang-Dong Wang, Jian-Huang Lai, Philip S. Yu. "DeepCF: A Unified Framework of Representation Learning and Matching Function Learning in Recommender System." AAAI 2019 (<font color='red'>CORE A*</font>, **Oral**). [[Talk]](https://familyld.github.io/files/AAAI2019-DeepCF.pdf)[[Paper]](https://familyld.github.io/files/19AAAI_DeepCF.pdf) [[Code]](https://github.com/familyld/DeepCF)
 
