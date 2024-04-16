@@ -23,7 +23,7 @@ My current research focuses on improving the reliability of autonomous agents fr
 🔥 News
 =======
 
-* Our paper on fairness in reinforcement learning is accepted by [IJCAI 2024](https://ijcai-24.org/). Plus, our tutorial is also accepted! See you in Jeju, Korea!
+* Our paper on fairness in reinforcement learning is accepted by [IJCAI 2024](https://ijcai24.org/). Plus, our tutorial is also accepted! See you in Jeju, Korea!
 * I'm grateful to receive the Student Best Paper Award from the [Australian Artificial Intelligence Institute](https://www.uts.edu.au/research/australian-artificial-intelligence-institute).
 * Our tutorial proposal on causal reinforcement learning is accepted by [IJCNN 2024](https://2024.ieeewcci.org/). See you in Yokohama, Japan!
 * Our survey paper on causal reinforcement learning is accepted by [Transactions on Machine Learning Research](https://openreview.net/pdf?id=qqnttX9LPo)! 
