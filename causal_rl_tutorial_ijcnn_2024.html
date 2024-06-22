@@ -107,7 +107,18 @@
         }
         .btn {
             display: inline-block;
-            margin: 50px 50px;
+            margin: 50px 50px 5px 50px;
+            padding: 10px 10px;
+            min-width: 200px;
+            text-align: center;
+            color: white;
+            background-color: #007BFF;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn2 {
+            display: inline-block;
+            margin: 5px 50px 50px 50px;
             padding: 10px 10px;
             min-width: 200px;
             text-align: center;
@@ -205,6 +216,33 @@
             color: #007BFF;
             text-decoration: none;
         }
+        .citation {
+            margin: 20px 20px;
+            text-align: center;
+        }
+        .citation h2 {
+            font-size: 36px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        .citation p {
+            margin: 5px 0;
+            font-size: 18px;
+            text-align: left;
+            max-width: 800px;
+            margin: 10px auto;
+        }
+        .citation pre {
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
         @media (max-width: 768px) {
             .content {
                 margin-left: 200px;
@@ -224,7 +262,7 @@
             .header h2 {
                 font-size: 14px; /* Reduce font size for smaller screens */
             }
-            .btn {
+            .btn .btn2 {
                 margin: 50px 5px;
                 min-width: 150px;
             }
@@ -254,7 +292,11 @@
         </div>
         <div class="buttons">
             <a href="link-to-slides-url" class="btn">Link to slides</a>
-            <a href="link-to-recording-url" class="btn">Link to recording</a>
+            <a href="https://github.com/familyld/Awesome-Causal-RL" class="btn">Link to recording</a>
+        </div>
+        <div class="buttons">
+            <a href="https://openreview.net/pdf?id=qqnttX9LPo" class="btn2">Link to paper</a>
+            <a href="link-to-github-url" class="btn2">Link to github</a>
         </div>
         <div class="prerequisites" id="prerequisites">
             <h2>Prerequisites</h2>
@@ -286,6 +328,18 @@
                     <p>Prof. Chengqi Zhang is a Distinguished Professor and a Pro Vice-Chancellor at the University of Technology Sydney (UTS). He is also the Chairman of the Australian Computer Society National Committee for Artificial Intelligence and the General Chair of IJCAI-2024. He has a Doctor of Science degree in Artificial Intelligence from Deakin University and a PhD degree in Artificial Intelligence from The University of Queensland. He is a Fellow of the Australian Computer Society and a Senior Member of the IEEE Computer Society. He has published over 350 scholarly articles and has an H-index of 69. He has been a keynote speaker at 28 international conferences and has supervised over 30 doctoral graduates. He has received several awards, including the NSW Science and Engineering Award (2011) and the 2021 IEEE ICDM Outstanding Service Award. He was the founding Director of the UTS Priority Research Centre for Quantum Computation & Intelligent Systems (QCIS) from 2008 to 2016, which helped UTS Computer Science to be ranked among the top 100 universities by QS 2021. He has established five joint research centres with leading Chinese universities and institutions. He is a leading expert in the fields of Distributed Artificial Intelligence and Data Mining.</p>
                 </div>
             </div>
+        </div>
+        <div class="citation" id="citation">
+            <h2>Citation</h2>
+            <p>If you find this tutorial useful for your research, please consider citing our work. Thank you! 😎 </p>
+<pre>
+@article{deng2023causal,
+    title=title={Causal Reinforcement Learning: A Survey},
+    title=author={Deng, Zhihong and Jiang, Jing and Long, Guodong and Zhang, Chengqi},
+    title=journal={Transactions on Machine Learning Research},
+    title=year={2023}
+}
+</pre>
         </div>
         <div class="references" id="references">
             <h2>References</h2>
