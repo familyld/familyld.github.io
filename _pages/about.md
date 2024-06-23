@@ -8,11 +8,9 @@ redirect_from:
   - /about.html
 ---
 
-I am a PhD student at the University of Technology Sydney (UTS), supervised by [Prof. Chengqi Zhang](https://www.uts.edu.au/staff/chengqi.zhang) and [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang). Before joining UTS, I was a visiting scholar at the Southern University of Science and Technology (SUSTech), working with [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang) and [Prof. Xuan Song](https://www.sustech.edu.cn/zh/songxuan.html). I received my Master's Degree and Bachelor's Degree from the School of Data and Computer Science, Sun Yat-sen University (SYSU) in 2020 and 2017 respectively, under the supervision of [Prof. Chang-Dong Wang](http://www.scholat.com/changdongwang.cn). 
+I am a PhD student at the University of Technology Sydney (UTS), supervised by [Prof. Chengqi Zhang](https://www.uts.edu.au/staff/chengqi.zhang) and [Prof. Jing Jiang](https://www.uts.edu.au/staff/jing.jiang). Before joining UTS, I was a visiting scholar at the Southern University of Science and Technology (SUSTech), working with [Dr Jing Jiang](https://www.uts.edu.au/staff/jing.jiang) and [Prof. Xuan Song](https://www.sustech.edu.cn/zh/songxuan.html). I received my Master's Degree and Bachelor's Degree from the School of Data and Computer Science, Sun Yat-sen University (SYSU) in 2020 and 2017 respectively, under the supervision of [Prof. Chang-Dong Wang](http://www.scholat.com/changdongwang.cn). 
 
 My current research focuses on improving the reliability of autonomous agents from a causal perspective. This not only allows agents to gain a deeper understanding of the world and make more informed decisions, but also fosters trust and transparency by elucidating the causal relationships behind their decisions, not just correlations. Ultimately, the goal of my research is to advance the progress of next-generation AI agents that are not only intelligent but also reliable, with enhanced robustness, interpretability, fairness, and safety. *If you are also passionate about this field and are interested in potential collaborations or discussing research ideas, please feel free to [reach out to me](zhi-hong.deng@student.uts.edu.au)！*  😉
-
-**I am currently seeking postdoctoral positions or roles as a research scientist/engineer in related fields. If you have any opportunities, please do not hesitate to contact me. Thank you!**
 
 - 🎓 [Google Scholar](https://scholar.google.com.au/citations?user=e8D8_NwAAAAJ)
 - 📘 [Zhihu](https://www.zhihu.com/people/Zhi-Hong.Deng)
