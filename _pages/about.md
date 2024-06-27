@@ -23,7 +23,7 @@ My current research focuses on improving the reliability of autonomous agents fr
 
 * Our paper on fairness in reinforcement learning is accepted by [IJCAI 2024](https://ijcai24.org/). Plus, our tutorial is also accepted! See you in Jeju, Korea!
 * I'm grateful to receive the Student Best Paper Award from the [Australian Artificial Intelligence Institute](https://www.uts.edu.au/research/australian-artificial-intelligence-institute).
-* Our tutorial proposal on causal reinforcement learning is accepted by [IJCNN 2024](https://2024.ieeewcci.org/). See you in Yokohama, Japan!
+* Our tutorial proposal on causal reinforcement learning is accepted by [IJCNN 2024](https://2024.ieeewcci.org/) (Please check our [tutorial](https://familyld.github.io/causal_rl_tutorial_ijcnn_2024.html) here). See you in Yokohama, Japan!
 * Our survey paper on causal reinforcement learning is accepted by [Transactions on Machine Learning Research](https://openreview.net/pdf?id=qqnttX9LPo)! 
 * Our paper on offline RL is accepted by [IEEE Transactions on Pattern Analysis and Machine Intelligence](https://ieeexplore.ieee.org/document/10301548/) (**CORE A\*, IF=24.314**)!
 * We just present a tutorial on causal reinforcement learning at [ADMA 2023](https://adma2023.uqcloud.net/index.html) in Shenyang, China. Please check our [presentation](https://2wildkids.com/files/ADMA2023-Tutorial-CausalRL-ZhihongDeng.pdf) here.
