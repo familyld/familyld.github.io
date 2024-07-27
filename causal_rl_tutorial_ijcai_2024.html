@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IJCNN 2024 Tutorial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar {
+            background-color: #333;
+            color: white;
+            width: 200px;
+            position: fixed;
+            height: 100%;
+            padding: 60px 20px 20px; /* Add padding to avoid overlap with the toggle button */
+            top: 0;
+            left: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .sidebar.hide {
+            transform: translateX(-100%);
+        }
+        .content {
+            padding: 0px;
+            flex: 1;
+            transition: margin-left 0.3s ease, max-width 0.3s ease;
+            margin-left: 240px; /* Default margin when sidebar is visible */
+            max-width: calc(100% - 240px); /* Default max-width when sidebar is visible */
+        }
+        .content.full-width {
+            margin-left: 0px;
+            max-width: calc(100%);
+        }
+        .header {
+            position: relative;
+            background: url('./images/tutorial_background.png') no-repeat center center;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            height: 50vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Black semi-transparent overlay */
+            z-index: 0;
+        }
+        .header h1, .header h2 {
+            position: relative;
+            z-index: 1;
+        }
+        .header h1 {
+            margin: 0;
+            margin-top: -60px;
+            font-size: 54px;
+        }
+        .header h2 {
+            margin: 20px 0 0;
+            font-size: 32px;
+        }
+        .intro {
+            margin: 20px 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .intro h2 {
+            font-size: 36px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        .intro p {
+            text-align: left;
+            max-width: 800px;
+            margin: 10px auto;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            margin: 50px 50px 5px 50px;
+            padding: 10px 10px;
+            min-width: 200px;
+            text-align: center;
+            color: white;
+            background-color: #007BFF;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn2 {
+            display: inline-block;
+            margin: 5px 50px 50px 50px;
+            padding: 10px 10px;
+            min-width: 200px;
+            text-align: center;
+            color: white;
+            background-color: #007BFF;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .prerequisites {
+            margin: 20px 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .prerequisites h2 {
+            font-size: 36px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        .prerequisites p {
+            text-align: left;
+            max-width: 800px;
+            margin: 10px auto;
+        }
+        .references {
+            margin: 20px 20px;
+            text-align: center;
+        }
+        .references h2 {
+            font-size: 36px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        .references p {
+            margin: 5px 0;
+            font-size: 18px;
+            text-align: left;
+            max-width: 800px;
+            margin: 10px auto;
+        }
+        .footer {
+            text-align: center;
+            margin: 40px 0;
+            font-size: 16px;
+        }
+        .footer a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .speakers {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .speakers h2 {
+            font-size: 36px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        .speaker {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .speaker img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover; /* Ensures the image fits the container while maintaining aspect ratio */
+            margin-right: 20px;
+        }
+        .speaker-info {
+            max-width: 600px;
+            text-align: left;
+        }
+        .speaker-info h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .speaker-info p {
+            margin: 10px 0 0;
+            font-size: 16px;
+        }
+        .speaker-info a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .citation {
+            margin: 20px 20px;
+            text-align: center;
+        }
+        .citation h2 {
+            font-size: 36px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        .citation p {
+            margin: 5px 0;
+            font-size: 18px;
+            text-align: left;
+            max-width: 800px;
+            margin: 10px auto;
+        }
+        .citation pre {
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 200px;
+                max-width: calc(100%);
+            }
+            .toggle-btn {
+                left: 10px;
+            }
+            .header {
+                padding: 50px 0px; /* Reduce padding for smaller screens */
+                height: auto; /* Let the height adjust based on content */
+            }
+            .header h1 {
+                font-size: 24px; /* Reduce font size for smaller screens */
+                margin-top: 0;
+            }
+            .header h2 {
+                font-size: 14px; /* Reduce font size for smaller screens */
+            }
+            .btn .btn2 {
+                margin: 50px 5px;
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar">
+        <h2>IJCNN 2024 Tutorial</h2>
+        <a href="">Home</a>
+        <a href="#overview">Overview</a>
+        <a href="#speakers">Speakers</a>
+        <a href="#references">References</a>
+    </div>
+    <div class="content">
+        <div class="header" id="home">
+            <h1>Towards Causal Reinforcement Learning<br>Empowering Agents with Causality</h1>
+            <h2>Zhihong Deng, Jing Jiang, Chengqi Zhang</h2>
+        </div>
+        <div class="intro" id="overview">
+            <h2>Overview</h2>
+            <p>While autonomous agents driven by reinforcement learning techniques have made significant strides in decision-making under uncertainty, they still lack a nuanced understanding of the world. Recognizing the pivotal role of causal understanding in human cognition, a new wave of reinforcement learning research has emerged, integrating insights from causality research to improve agent’s decision-making capabilities. Our tutorial delves into this fascinating research area, offering participants a unique opportunity to explore the intersection of causality and reinforcement learning.</p>
+            <p>The tutorial is divided into two parts, crafted to provide participants with a comprehensive understanding of causal reinforcement learning. In the first part, participants will be guided through the fundamental concepts underpinning both causality and reinforcement learning, including basic definitions, mathematical representations, and their connections. Moving into the second part, participants will embark on a journey to explore the synergies between causal research and reinforcement learning, gaining insights into how causal research enriches traditional reinforcement learning methodologies, addressing critical challenges such as sample efficiency, generalization ability, and reliability. The tutorial will conclude with a discussion of the future opportunities and challenges in causal reinforcement learning.</p>
+            <p>Whether you are an experienced reinforcement learning researcher, a causal research enthusiast, or a machine learning practitioner eager to expand your toolkit, join us in exploring the exciting world of causal reinforcement learning and advancing this emerging field together.
+            </p>
+        </div>
+        <div class="buttons">
+            <a href="https://familyld.github.io/files/IJCNN2024-Tutorial-CausalRL-ZhihongDeng.pdf" class="btn">Link to slides</a>
+            <a href="link-to-recording-url" class="btn">Link to recording</a>
+        </div>
+        <div class="buttons">
+            <a href="https://openreview.net/pdf?id=qqnttX9LPo" class="btn2">Link to paper</a>
+            <a href="https://github.com/familyld/Awesome-Causal-RL" class="btn2">Link to github</a>
+        </div>
+        <div class="prerequisites" id="prerequisites">
+            <h2>Prerequisites</h2>
+            <p>While familiarity with basic concepts in reinforcement learning and causality is beneficial, it is not mandatory for participation in the tutorial. Participants should have a general understanding of machine learning. Additionally, a basic understanding of probability theory and graphical models would be helpful, albeit not essential. The tutorial will cater to participants with varying levels of expertise, providing explanations and examples to accommodate diverse backgrounds and interests.</p>
+        </div>
+        <div class="speakers" id="speakers">
+            <h2>Speakers</h2>
+            <div class="speaker">
+                <img src="./images/ZhihongDeng.jpg" alt="Zhihong Deng">
+                <div class="speaker-info">
+                    <h3>Zhihong Deng</h3>
+                    <p><strong>Bio:</strong> <a href="https://familyld.github.io/">[Homepage]</a> <a href="https://scholar.google.com/citations?hl=en&user=e8D8_NwAAAAJ">[Google Scholar]</a></p>
+                    <p>Zhihong Deng is a PhD student at the University of Technology Sydney. His research currently focuses on improving the reliability of autonomous agents from a causal perspective. This not only allows agents to gain a deeper understanding of the world and make more informed decisions, but also fosters trust and transparency by elucidating the causal relationships behind their decisions. Ultimately, the goal is to advance the progress of next-generation AI agents that are not only intelligent but also reliable, with enhanced robustness, interpretability, fairness, and safety. He has published papers in multiple international conferences and journals, such as AAAI, ICLR, IJCAI, IEEE TPAMI,  IEEE TNNLS and IEEE TCYB. He is also the recipient of the best paper award from the Australian Artificial Intelligence Institute in 2023.</p>
+                </div>
+            </div>
+            <div class="speaker">
+                <img src="./images/JingJiang.jpg" alt="Jing Jiang">
+                <div class="speaker-info">
+                    <h3>Jing Jiang</h3>
+                    <p><strong>Bio:</strong> <a href="https://scholar.google.com/citations?user=XFtCe08AAAAJ">[Google Scholar]</a></p>
+                    <p>Jing Jiang is an Associate Professor in the School of Computer Science, a core member of Australian Artificial Intelligence Institute (AAII), at the University of Technology Sydney (UTS) in Australia. Her research interests focus on machine learning and its applications. She is the recipient of the DECRA (Discovery Early Career Researcher Award) fellowship funded by ARC (Australian Research Council). She has published over 70 papers in the related areas of AI in the top-tier conferences and journals, such as NeurIPS, ICML, ICLR, AAAI, IJCAI, KDD, TPAMI, TNNLS and TKDE.</p>
+                </div>
+            </div>
+            <div class="speaker">
+                <img src="./images/ChengqiZhang.jpg" alt="Chengqi Zhang">
+                <div class="speaker-info">
+                    <h3>Chengqi Zhang</h3>
+                    <p><strong>Bio:</strong> <a href="https://scholar.google.com/citations?user=B6lBmqEAAAAJ">[Google Scholar]</a></p> 
+                    <p>Prof. Chengqi Zhang is a Distinguished Professor and a Pro Vice-Chancellor at the University of Technology Sydney (UTS). He is also the Chairman of the Australian Computer Society National Committee for Artificial Intelligence and the General Chair of IJCAI-2024. He has a Doctor of Science degree in Artificial Intelligence from Deakin University and a PhD degree in Artificial Intelligence from The University of Queensland. He is a Fellow of the Australian Computer Society and a Senior Member of the IEEE Computer Society. He has published over 350 scholarly articles and has an H-index of 69. He has been a keynote speaker at 28 international conferences and has supervised over 30 doctoral graduates. He has received several awards, including the NSW Science and Engineering Award (2011) and the 2021 IEEE ICDM Outstanding Service Award. He was the founding Director of the UTS Priority Research Centre for Quantum Computation & Intelligent Systems (QCIS) from 2008 to 2016, which helped UTS Computer Science to be ranked among the top 100 universities by QS 2021. He has established five joint research centres with leading Chinese universities and institutions. He is a leading expert in the fields of Distributed Artificial Intelligence and Data Mining.</p>
+                </div>
+            </div>
+        </div>
+        <div class="citation" id="citation">
+            <h2>Citation</h2>
+            <p>If you find this tutorial useful for your research, please consider citing our work. Thank you! 😎 </p>
+<pre>
+@article{deng2023causal,
+    title=title={Causal Reinforcement Learning: A Survey},
+    title=author={Deng, Zhihong and Jiang, Jing and Long, Guodong and Zhang, Chengqi},
+    title=journal={Transactions on Machine Learning Research},
+    title=year={2023}
+}
+</pre>
+        </div>
+        <div class="references" id="references">
+            <h2>References</h2>
+            <p>Disclaimers: <br>We do not cover all relevant fields / techniques / papers in this tutorial. For further information, please refer to our <a href="https://github.com/familyld/Awesome-Causal-RL">[Awesome-Causal-RL]</a> github repository. Please feel free to email us with pointers and suggestions, and we will update the repo.</p>
+            <br>
+            <p>Buesing, L., Weber, T., Zwols, Y., Heess, N., Racaniere, S., Guez, A., & Lespiau, J. B. (2018, September). Woulda, Coulda, Shoulda: Counterfactually-Guided Policy Search. In International Conference on Learning Representations.</p>
+            <p>Chowdhery, A., Narang, S., Devlin, J., Bosma, M., Mishra, G., Roberts, A., ... & Fiedel, N. (2023). PaLM: Scaling language modeling with pathways. Journal of Machine Learning Research, 24(240), 1-113.</p>
+            <p>Deng, Z., Fu, Z., Wang, L., Yang, Z., Bai, C., Zhou, T., ... & Jiang, J. (2023). False Correlation Reduction for Offline Reinforcement Learning. IEEE Transactions on Pattern Analysis and Machine Intelligence.</p>
+            <p>Deng, Z., Jiang, J., Long, G., & Zhang, C. (2024, August). What Hides behind Unfairness? Exploring Dynamics Fairness in Reinforcement Learning. In IJCAI.</p>
+            <p>Deng, Z., Jiang, J., Long, G., & Zhang, C. (2023). Causal Reinforcement Learning: A Survey. Transactions on Machine Learning Research.</p>
+            <p>Doshi-Velez, F., & Kim, B. (2017). Towards a rigorous science of interpretable machine learning. arXiv preprint arXiv:1702.08608.</p>
+            <p>Huang, B., Feng, F., Lu, C., Magliacane, S., & Zhang, K. (2021, October). AdaRL: What, Where, and How to Adapt in Transfer Reinforcement Learning. In International Conference on Learning Representations.</p>
+            <p>Guo, J., Gong, M., & Tao, D. (2021, October). A Relational Intervention Approach for Unsupervised Dynamics Generalization in Model-Based Reinforcement Learning. In International Conference on Learning Representations.</p>
+            <p>Kirk, R., Zhang, A., Grefenstette, E., & Rocktäschel, T. (2021). A survey of generalisation in deep reinforcement learning. arXiv preprint arXiv:2111.09794, 1, 16.</p>
+            <p>Pearl, J. (2009). Causality. Cambridge university press.</p>
+            <p>Pearl, J., & Mackenzie, D. (2018). The book of why: the new science of cause and effect. Basic books.</p>
+            <p></p>
+            <p>Schölkopf, B., Locatello, F., Bauer, S., Ke, N. R., Kalchbrenner, N., Goyal, A., & Bengio, Y. (2021). Toward causal representation learning. Proceedings of the IEEE, 109(5), 612-634.</p>
+            <p>Seitzer, M., Schölkopf, B., & Martius, G. (2021). Causal influence detection for improving efficiency in reinforcement learning. Advances in Neural Information Processing Systems, 34, 22905-22918.</p>
+            <p>Sontakke, S. A., Mehrjou, A., Itti, L., & Schölkopf, B. (2021, July). Causal curiosity: Rl agents discovering self-supervised experiments for causal representation learning. In International conference on machine learning (pp. 9848-9858). PMLR.</p>
+            <p>Zhang, Y., Du, Y., Huang, B., Wang, Z., Wang, J., Fang, M., & Pechenizkiy, M. (2024). Interpretable reward redistribution in reinforcement learning: A causal approach. Advances in Neural Information Processing Systems, 36.</p>
+        </div>
+        <!-- <div class="footer">
+            <p>Questions, feedback or spotted a mistake? <a href="zhi-hong.deng@student.uts.edu.au">Email us</a></p>
+        </div> -->
+    </div>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.content');
+            sidebar.classList.toggle('show');
+            sidebar.classList.toggle('hide');
+            content.classList.toggle('full-width');
+        }
+
+        function checkScreenSize() {
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.content');
+            if (window.innerWidth <= 1280) {
+                sidebar.classList.add('hide');
+                sidebar.classList.remove('show');
+                content.classList.add('full-width');
+            } else {
+                sidebar.classList.remove('hide');
+                sidebar.classList.add('show');
+                content.classList.remove('full-width');
+            }
+        }
+
+        window.addEventListener('resize', checkScreenSize);
+        window.addEventListener('load', checkScreenSize);
+    </script>
+</body>
+</html>
