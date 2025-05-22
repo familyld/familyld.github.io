@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcard Practice Extended</title>
+  <style>
+    html { font-size: 18px; }
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; }
+    .container { background: #fff; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px; position: relative; box-sizing: border-box; }
+    .info { font-size: 1.2rem; margin-bottom: 1rem; color: #555; }
+    .question { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .answer { font-size: 1.3rem; margin-top: 0.75rem; color: #333; }
+    button, input[type="file"] + label { padding: 0.75rem 1.25rem; margin: 0.25rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; }
+    #show-answer-btn { background-color: #4CAF50; color: white; }
+    #next-btn { background-color: #2196F3; color: white; }
+    #bookmark-btn { background-color: #FF5722; color: white; }
+    #view-bookmarks-btn { background-color: #9C27B0; color: white; }
+    #view-all-btn { background-color: #795548; color: white; }
+    #export-btn { background-color: #607D8B; color: white; }
+    #import-label { background-color: #009688; color: white; display: inline-block; }
+    #import-file { display: none; }
+    .modal { background: #fff; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; z-index: 10; display: none; }
+    .modal h2 { margin-top: 0; font-size: 1.6rem; }
+    .modal ul { list-style: none; padding: 0; }
+    .modal li { margin-bottom: 0.5rem; cursor: pointer; color: #2196F3; text-decoration: underline; font-size: 1.2rem; }
+    .modal button.close-btn { background-color: #f44336; color: white; }
+    @media (max-width: 400px) {
+      html { font-size: 16px; }
+      button, input[type="file"] + label { font-size: 0.9rem; padding: 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="info">
+      Practiced: <span id="practiced-count">0</span> / <span id="total-count"></span>
+    </div>
+    <div id="card">
+      <p id="question" class="question"></p>
+      <button id="show-answer-btn">Show Answer</button>
+      <p id="answer" class="answer" style="display:none;"></p>
+      <button id="bookmark-btn">Bookmark</button>
+    </div>
+    <div style="margin-top:1rem;">
+      <button id="next-btn">Next Question</button>
+      <button id="view-bookmarks-btn">View Bookmarks</button>
+      <button id="view-all-btn">View All Questions</button>
+      <button id="export-btn">Export Bookmarks</button>
+      <input type="file" id="import-file" accept="application/json" />
+      <label for="import-file" id="import-label">Import Bookmarks</label>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="bookmark-modal" class="modal">
+    <h2>Bookmarked Questions</h2>
+    <ul id="bookmarked-questions"></ul>
+    <button class="close-btn" id="close-bookmarks-btn">Close</button>
+  </div>
+  <div id="all-modal" class="modal">
+    <h2>All Questions</h2>
+    <ul id="all-questions"></ul>
+    <button class="close-btn" id="close-all-btn">Close</button>
+  </div>
+
+  <script>
+    const questions = [
+      { id: 1, q: "1. (Parent Teacher Conferences) Schools host parent teacher conferences four times a year and it is important for families to attend. This is your chance to meet with teachers and ask questions about your child's progress. It can be helpful to write down questions ahead of time." },
+      { id: 2, q: "2. (Bill) The bill calls for the establishment of the National Landslide Hazards Reduction Program within one year of becoming law. The program serves numerous functions, including to identify and understand landslide hazards and risks, reduce losses from landslides, protect communities at risk of landslides hazards, and improve communication and emergency preparedness." },
+      { id: 3, q: "3. (Agricultural Problems) Agricultural problems due to climate change, abnormal weather, water depletion and the collapse of soil have become big problems in all parts of the world. Many are now focusing on ethics and family farming as a way to combat these issues." },
+      { id: 4, q: "4. (Innovative Product) An innovative new product or service can give a firm a head start over its rivals, which can be difficult for a new entrant to overcome. If the new technology is also patented, then other firms cannot simply copy its design. It is legally protected." },
+      { id: 5, q: "5. (Urban Forests) A community's urban forest is an extension of its pride and community spirit. Trees enhance community economic stability by attracting businesses and tourists as people tend to linger and shop longer along tree-lined streets. Apartments and offices in wooded areas rent more quickly and businesses leasing office spaces in developments with trees reported higher productivity and fewer absences." },
+      { id: 6, q: "6. (Root Network) The networks of roots that plants use to absorb water and nutrients can encompass a space larger than the part of the plant visible above ground. The nature of these roots systems can help plants adapt to challenging environments such as deserts." },
+      { id: 7, q: "7. (Child Psychology) Within this free course, you will be introduced briefly to the discipline of child psychology and to theories and approaches that have been developed to help us understand and support children's lives by focusing on the individual children. Psychologists can assess changes in their child's abilities over time, including their physical, cognitive, social, and emotional development." },
+      { id: 8, q: "8. (Political Problems) The course considers the ways in which thinkers have responded to the particular political problems of their day and the ways in which they contribute to a broader conversation about human goods and needs, justice, democracy, and the proper relationship of the individual to the state." },
+      { id: 9, q: "9. (William Shakespeare) Three hundred and eighty years after his death, William Shakespeare remains the central author of the English-speaking world; he is the most quoted poet and the most regularly produced playwright — and now among the most popular screenwriters as well. Why is that, and who \"is\" he?" },
+      { id: 10, q: "10. (Rates of Depression) At a time when stress levels are soaring, rates of depression are increasing and the gap between rich and poor is ever widening. We believe that giving can play a positive role in helping people to feel connected to those around them and generate a sense of purpose and hope. When we give, we feel valued, useful and happy." },
+      { id: 11, q: "11. (Tutor) Your tutor helps you make the most of your time at university by giving you guidance and support along the way. All new students are allocated a personal tutor who will encourage you to get the most out of your course, direct you to other sources of support and help you achieve your goals." },
+      { id: 12, q: "12. (Enough Fluid) Your body is nearly two-thirds water. And so it is really important that you consume enough fluid to stay hydrated and healthy. If you don't get enough fluid you may feel tired, get headaches, and not perform at your best." },
+      { id: 13, q: "13. (Hybrid Rice) A new breed of rice that is a hybrid of an annual Asian rice and a perennial African rice could be a more sustainable option. The hybrid rice was able to produce grain for 8 consecutive harvests over four years at a yield comparable to the standard annual Asian rice, with much lower costs and labor." },
+      { id: 14, q: "14. (Baby Hearing) Most babies start developing their hearing while still in the womb, prompting some hopeful parents to play classical music to their pregnant bellies. Some research even suggests that infants are listening to adult speech as early as 10 weeks before birth, gathering the basic building blocks of their family's native tongue." },
+      { id: 15, q: "15. (Global Changes) Globalization refers to a set of changes rather than a single change. Many of these changes are social, cultural and political rather than purely economic, and one of the main drivers in addition to the global marketplace is the communication revolution." },
+      { id: 16, q: "16. (Brain Efficiency) Efficiency is not your friend when it comes to cognitive growth. In order to keep our brains making new connections and keep them active, you need to keep moving on to another challenging activity as soon as you reach the point of mastery in the one you were engaging in." },
+      { id: 17, q: "17. (Manchester) About a person who graduated from Cambridge and what his position was. He lived in Manchester, and died there. 'Manchester' is mentioned at least twice." },
+      { id: 18, q: "18. (Paraphrasing) We define paraphrasing as putting a passage from an author into your own words. However, what are your own words? How different must your paraphrase be from the original? The answer is it should be considerably different. The whole point of paraphrasing is to show you have read and understood another person's ideas and can summarize them in your own writing style rather than borrowing their phrases. If you just change a few words or add some bits of your own to an otherwise reproduced passage, you will probably be penalized for plagiarism. You should aim to condense and simplify a writer's ideas and describe them using different sentence structures and expressions." },
+      { id: 19, q: "19. (Hunter-gatherer) The life of a hunter-gatherer is indeed, as Thomas Hobbes said of the state of nature, 'solitary, poor, nasty, brutish, and short'. In some respects, to be sure, wandering through the jungle bagging monkeys may be preferable to the hard slog of subsistence agriculture." },
+      { id: 20, q: "20. (Spanish and French) Spanish is one of the languages that are most spoken in the United States. ... French is very common in American." },
+      { id: 21, q: "21. (Selective History) History is selective. What history books tell us about the past is not everything that happened, but what historians have selected. They cannot put in everything: choices have to be made. Choices must similarly be made about which aspects of the past should be formally taught to the next generation in the shape of school history lessons." },
+      { id: 22, q: "22. (Sandra Lousada) London's National Portrait Gallery is currently celebrating the fifty-year career of photographer Sandra Lousada. The twenty one portraits on display depict key figures in literature, film and fashion from the early 1960s. Subsequent to the acquisition of forty portraits by Lousada, the display at The National Portrait Gallery highlights shots taken between 1960 and 1964, many of which feature in Lousada's book Public Faces Private Places (2008). Formal commissioned portraits are shown alongside behind the scenes photographs taken on films sets and unguarded portraits of sitters captured at home." },
+      { id: 23, q: "23. (Interdisciplinary Studies) Interdisciplinarity or interdisciplinary studies involves the combination of two or more academic disciplines into one activity (e.g., a research project). It draws knowledge from several other fields like sociology, anthropology, psychology, economics etc. It is about creating something by thinking across boundaries. It is related to an interdiscipline or an interdisciplinary field, which is an organizational unit that crosses traditional boundaries between academic disciplines or schools of thought, as new needs and professions emerge." },
+      { id: 24, q: "24. (Electricity Discoveries) The Royal Institution is an organization that has been around for 209 years. Many of the people that have worked here have been scientists themselves, including Michael Faraday. He made the discoveries that made generating and using electricity much easier, making it possible for us all to switch on lights, cook our dinner, play games consoles much, much more." },
+      { id: 25, q: "25. (Australian Mining Industry) Australia has one of the world's most important mining industries. It is a major exporter of coal, iron ore, gold and copper and is self-sufficient in all minerals bar petroleum. Since the first discoveries, the coal in 1798, mineral production has risen every year. In the decade to 1992 it doubled." },
+      { id: 26, q: "26. (Tourism) Tourism is a challenging sector which divides statistics since businesses serve tourists, also serve local people. Therefore, it is not straightforward to estimate how much business sectors' revenues and how many jobs are due to tourist expenditures." },
+      { id: 27, q: "27. (Girls v.s. Boys) Teenage girls are continuing to outperform boys in English while the gender gap in achievements in math and science has almost disappeared. The figures show that last year 80% of 14-year-old girls reached at least the expected level 5 in English, compared with 65% of boys. But in math, the girls are just 1% ahead of boys, while in science the difference is 2%." },
+      { id: 28, q: "28. (Man-made Light) Have you ever pictured a world without light? Just think how much we rely on man-made light sources in our lives. Without engineers, we wouldn't be able to live the way we do. No street lights, no TV, no computer display, no house lights. Engineers design and build all these things, and they also design, build and run the electricity systems that power all these light sources." },
+      { id: 29, q: "29. (Only Family) Imagine living all your life as the only family on your street. Then, one morning, you open the front door and discover houses all around you. You see neighbors tending their gardens and children walking to school. Where did all the people come from? What if the answer turned out to be that they had always been there — you just hadn't seen them?" },
+      { id: 30, q: "30. (Abstract Preparation) The preparation of abstracts is an intellectual effort, requiring general familiarity with the subject. To bring out the salient points of an author's argument calls for skill and experience. Consequently, a considerable amount of qualified manpower that could be used to advantage in other ways must be diverted to the task of facilitating access to information." },
+      { id: 31, q: "31. (Domestic Division) Traditional divisions of domestic work are understood to persist because of the strong association of the home with femininity and paid work with masculinity - to challenge who does what in the home is arguably tantamount to challenging what it is to be a woman or a man." },
+      { id: 32, q: "32. (Actor Training) Training to become an actor is an intensive process which requires curiosity, courage and commitment. You’ll learn how to prepare for rehearsal, how to rehearse and how to use independent and proactive processes to achieve your best work possible for stage and screen." },
+      { id: 33, q: "33. (Elephant) The elephant is the largest living land mammal. During evolution, its skeleton has greatly altered from the usual mammal, designed for two main reasons. One is to cope with the great weight of huge grinding cheek teeth and elongated tusk, making the skull particularly massive. The other is to support the enormous bulk of such a huge body." },
+      { id: 34, q: "34. (Shrimp Farm) Shrimp farmers used to hold animals in nursery ponds for 30 to 60 days; now they try to move them into grow-out ponds in less than 30 days. This reduces stress on the animals and dramatically increases survivals in the grow-out ponds. Many farms that abandoned nursery ponds have gone back to them, and the results have been surprisingly positive. They're using the old, uncovered, earthen, nursery ponds." },
+      { id: 35, q: "35. (Fast Food) Hundreds of millions of American people eat fast food every day without giving it too much thought, unaware of the subtle and not so subtle ramifications of their purchases. They just grab their tray off the counter, find a table, take a seat, unwrap the paper, and dig in. The whole experience is transitory and soon forgotten." },
+      { id: 36, q: "36. (Restaurant Location) The physical location of a restaurant in the competitive landscape of the city has long been known as a major factor in its likely success or failure. Once restaurants are established in such environments they can do little about their location. All they can do is work to improve customer access to their premises." },
+      { id: 37, q: "37. (Russia) Long isolated from Western Europe, Russia grew up without participating in the development like the Reformation that many Russians taking pride in their unique culture find dubious value. Russia is, as a result, the most unusual member of the European family, if indeed it is European at all. The question is still open to debate, particularly among Russians themselves." },
+      { id: 38, q: "38. (Language Appearance) It seems that language appeared from nowhere since no other species has anything resembling human language. However, other animals do possess basic systems for perceiving and producing sounds that enable them to communicate. These systems may have been in place before the appearance of language." },
+      { id: 39, q: "39. (Blue (B)) Blue is the most popular color. Food researchers disagree when humans searched for food, they learned to avoid toxic or spoiled objects, which were often blue, black, or purple. When food dyed blue is served to study subjects, they lose appetite." },
+      { id: 40, q: "40. (Most Important Things) Food is one of the most important things you'll ever buy. And yet most people never bother to think about their food and where it comes from. People spend a lot more time worrying about what kind of blue jeans to wear, what kind of video games to play, what kind of computers to buy." },
+      { id: 41, q: "41. (Facebook) Facebook has defended itself against claims that using the site can damage wellbeing and mental health. In a blogpost, it said while there was evidence it could negatively affect mood, the way it affected people was determined by how they used it. Facebook's downsides could be combated by making more use of the site and interacting positively. A social media expert said the way Facebook was built made it hard to use it in those better ways." },
+      { id: 42, q: "42. (Cup Class Boats) At the end of this year, we will launch the cup class boats. So these will be about twice the power. The sailors are down in cockpits, unlike today. A lot of power is being generated by these four grinders that are providing hydraulic power, and that energy is being used to control the flying surface, the hydrofoil and is also being used to control the wing and the flaps, effectively the engine, of what we have." },
+      { id: 43, q: "43. (Botanic Gardens) Botanic gardens are scientific and cultural institutions established to collect, study, exchange and display plants for research and for the education and enjoyment of the public. There are major botanic gardens in each capital city. Zoological parks and aquariums are primarily engaged in the breeding, preservation and display of native and exotic fauna in captivity." },
+      { id: 44, q: "44. (Tool-user) The human animal's status as the only clever tool-user who can talk about our feelings is crumbling. Prairie dogs can make up words for new animals. Crows are born with the ability to make tools. Elephants recognise and stroke the bones of a lost family member. As biologists delve into these subjects, they're demonstrating that we're not nearly as unique as we once thought. It's the perfect time, scientifically speaking, to reassess our place in the animal kingdom." },
+      { id: 45, q: "45. (Undesirable Programs) Parents can communicate their personal feelings about undesirable programs both by discouraging their children from watching them and by writing to their local television station or to the programs sponsors. The public does have a voice. Clearly, not all programs need please everybody. We do have a choice of programs and we also have a choice, for ourselves and at least for our younger children, of watching or not watching. There is an off button on every set!" },
+      { id: 46, q: "46. (Blue) While blue is one of the most popular colors, it is one of the least appetizing. Food researchers say that when humans searched for food, they learned to avoid toxic or spoiled objects, which were often blue, black, or purple. When food dyed blue is served to study subjects, they lose appetite." },
+      { id: 47, q: "47. (Avi Loeb) “The situation is similar to a pregnant woman that has twin babies in her belly,” says Avi Loeb of the Harvard-Smithsonian Center for Astrophysics. He's proposing the idea in a paper that's been accepted for publication in the Astrophysical Journal Letters." },
+      { id: 48, q: "48. (Yellow) Yellow is considered as the most optimistic color. Yet surprisingly, people lose their tempers more often in yellow rooms and babies cry more in them. The reason may be that yellow is the hardest color for eyes to take in. So it can be overpowering if overused." },
+      { id: 49, q: "49. (Lincoln) Lincoln's apparently radical change of mind about his war power to emancipate slaves was caused by the escalating scope of war, which convinced him that any measure to weaken the Confederacy and strengthen the Union war effort was justifiable as a military necessity." },
+      { id: 50, q: "50. (Shakespeare) A young man from a small provincial town — a man without independent wealth, without powerful family connections and without a university education — moved to London in the late 1580's and, in a remarkably short time, became the greatest playwright not of his age alone but of all time. How was this achievement of magnitude made? How did Shakespeare become Shakespeare?" },
+    ];
+
+    let current, practicedCount=0;
+    const totalCountEl=document.getElementById('total-count'), practicedCountEl=document.getElementById('practiced-count');
+    const questionEl=document.getElementById('question'), answerEl=document.getElementById('answer');
+    const showBtn=document.getElementById('show-answer-btn'), nextBtn=document.getElementById('next-btn');
+    const bookmarkBtn=document.getElementById('bookmark-btn'), viewBmBtn=document.getElementById('view-bookmarks-btn');
+    const viewAllBtn=document.getElementById('view-all-btn'), exportBtn=document.getElementById('export-btn');
+    const importFile=document.getElementById('import-file');
+    const bmModal=document.getElementById('bookmark-modal'), allModal=document.getElementById('all-modal');
+    const bmUL=document.getElementById('bookmarked-questions'), allUL=document.getElementById('all-questions');
+
+    function updateSessionInfo(){ practicedCountEl.textContent=practicedCount; totalCountEl.textContent=questions.length; }
+    function getBookmarks(){ return JSON.parse(localStorage.getItem('bookmarks')||'[]'); }
+    function saveBookmarks(b){ localStorage.setItem('bookmarks',JSON.stringify(b)); }
+    function updateBookmarkBtn(){ bookmarkBtn.textContent=getBookmarks().includes(current.id)?'Unbookmark':'Bookmark'; }
+
+    function loadRandom(){
+      practicedCount++; updateSessionInfo();
+      const idx=Math.floor(Math.random()*questions.length); current=questions[idx];
+      questionEl.textContent=current.q;
+      if(current.a){ answerEl.textContent=current.a; showBtn.style.display='inline-block'; } else { answerEl.style.display='none'; showBtn.style.display='none'; }
+      answerEl.style.display='none'; showBtn.textContent='Show Answer'; updateBookmarkBtn();
+    }
+
+    showBtn.addEventListener('click',()=>{
+      if(answerEl.style.display==='none'){ answerEl.style.display='block'; showBtn.textContent='Hide Answer'; }
+      else{ answerEl.style.display='none'; showBtn.textContent='Show Answer'; }
+    });
+
+    nextBtn.addEventListener('click',loadRandom);
+
+    bookmarkBtn.addEventListener('click',()=>{
+      const b=getBookmarks(), i=b.indexOf(current.id);
+      if(i>-1) b.splice(i,1); else b.push(current.id);
+      saveBookmarks(b); updateBookmarkBtn();
+    });
+
+    viewBmBtn.addEventListener('click',()=>{
+      bmUL.innerHTML=''; getBookmarks().forEach(id=>{
+        const fq=questions.find(x=>x.id===id);
+        if(fq){ const li=document.createElement('li'); li.textContent=fq.q; li.onclick=()=>{ current=fq; questionEl.textContent=fq.q; if(fq.a){ answerEl.textContent=fq.a; showBtn.style.display='inline-block'; } else showBtn.style.display='none'; answerEl.style.display='none'; updateBookmarkBtn(); bmModal.style.display='none'; }; bmUL.appendChild(li);} });
+      bmModal.style.display='block';
+    });
+    document.getElementById('close-bookmarks-btn').onclick=()=>bmModal.style.display='none';
+
+    viewAllBtn.addEventListener('click',()=>{
+      allUL.innerHTML=''; questions.forEach(q=>{
+        const li=document.createElement('li'); li.textContent=q.q; li.onclick=()=>{ current=q; questionEl.textContent=q.q; if(q.a){ answerEl.textContent=q.a; showBtn.style.display='inline-block'; } else showBtn.style.display='none'; answerEl.style.display='none'; updateBookmarkBtn(); allModal.style.display='none'; }; allUL.appendChild(li);
+      }); allModal.style.display='block';
+    });
+    document.getElementById('close-all-btn').onclick=()=>allModal.style.display='none';
+
+    exportBtn.addEventListener('click',()=>{
+      const data=JSON.stringify(getBookmarks()), blob=new Blob([data],{type:'application/json'}), url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='flashcard_bookmarks.json'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    importFile.addEventListener('change',e=>{ const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ const arr=JSON.parse(r.result); if(Array.isArray(arr)) saveBookmarks(arr); alert('Imported!'); }catch{alert('Invalid format');}}; r.readAsText(file); });
+
+    // init
+    updateSessionInfo(); loadRandom();
+  </script>
+</body>
+</html>

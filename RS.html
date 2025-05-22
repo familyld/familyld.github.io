@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcard Practice Extended</title>
+  <style>
+    html { font-size: 18px; }
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; }
+    .container { background: #fff; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px; position: relative; box-sizing: border-box; }
+    .info { font-size: 1.2rem; margin-bottom: 1rem; color: #555; }
+    .question { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .answer { font-size: 1.3rem; margin-top: 0.75rem; color: #333; }
+    button, input[type="file"] + label { padding: 0.75rem 1.25rem; margin: 0.25rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; }
+    #show-answer-btn { background-color: #4CAF50; color: white; }
+    #next-btn { background-color: #2196F3; color: white; }
+    #bookmark-btn { background-color: #FF5722; color: white; }
+    #view-bookmarks-btn { background-color: #9C27B0; color: white; }
+    #view-all-btn { background-color: #795548; color: white; }
+    #export-btn { background-color: #607D8B; color: white; }
+    #import-label { background-color: #009688; color: white; display: inline-block; }
+    #import-file { display: none; }
+    .modal { background: #fff; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; z-index: 10; display: none; }
+    .modal h2 { margin-top: 0; font-size: 1.6rem; }
+    .modal ul { list-style: none; padding: 0; }
+    .modal li { margin-bottom: 0.5rem; cursor: pointer; color: #2196F3; text-decoration: underline; font-size: 1.2rem; }
+    .modal button.close-btn { background-color: #f44336; color: white; }
+    @media (max-width: 400px) {
+      html { font-size: 16px; }
+      button, input[type="file"] + label { font-size: 0.9rem; padding: 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="info">
+      Practiced: <span id="practiced-count">0</span> / <span id="total-count"></span>
+    </div>
+    <div id="card">
+      <p id="question" class="question"></p>
+      <button id="show-answer-btn">Show Answer</button>
+      <p id="answer" class="answer" style="display:none;"></p>
+      <button id="bookmark-btn">Bookmark</button>
+    </div>
+    <div style="margin-top:1rem;">
+      <button id="next-btn">Next Question</button>
+      <button id="view-bookmarks-btn">View Bookmarks</button>
+      <button id="view-all-btn">View All Questions</button>
+      <button id="export-btn">Export Bookmarks</button>
+      <input type="file" id="import-file" accept="application/json" />
+      <label for="import-file" id="import-label">Import Bookmarks</label>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="bookmark-modal" class="modal">
+    <h2>Bookmarked Questions</h2>
+    <ul id="bookmarked-questions"></ul>
+    <button class="close-btn" id="close-bookmarks-btn">Close</button>
+  </div>
+  <div id="all-modal" class="modal">
+    <h2>All Questions</h2>
+    <ul id="all-questions"></ul>
+    <button class="close-btn" id="close-all-btn">Close</button>
+  </div>
+
+  <script>
+    const questions = [
+        { id: 1, q: "1. They have enough work to keep them going." },
+        { id: 2, q: "2. You need warm clothes for the winter." },
+        { id: 3, q: "3. I need somebody to fix the problem with the computer screen." },
+        { id: 4, q: "4. Your son has a bad cold and is in the nurse's room." },
+        { id: 5, q: "5. The hotel is not far away from my apartment." },
+        { id: 6, q: "6. Please keep the keys with you because the front door often locks automatically." },
+        { id: 7, q: "7. If the doctor calls while I'm out, please leave a message." },
+        { id: 8, q: "8. 要点: ... line up in the row ..." },
+        { id: 9, q: "9. Several people have applied for this position." },
+        { id: 10, q: "10. You can speak to the current students at the information sessions." },
+        { id: 11, q: "11. You need to get a new photo for your driver's license." },
+        { id: 12, q: "12. You need to pass the written exam before you can apply for the driver's license." },
+        { id: 13, q: "13. The test shows that you know a lot about Canada." },
+        { id: 14, q: "14. I make sure to prepare reports for my boss." },
+        { id: 15, q: "15. Passengers on the train should not put feet on the seat." },
+        { id: 16, q: "16. If you like cooking, we can make supper together." },
+        { id: 17, q: "17. If you need a part-time job, it should not interfere with your studies." },
+        { id: 18, q: "18. 要点: ... king's power ..." },
+        { id: 19, q: "19. The restaurant is located next to the theater." },
+        { id: 20, q: "20. Globalization has been an overwhelming urbanization phenomenon." },
+        { id: 21, q: "21. The building will be closed and reopened next week." },
+        { id: 22, q: "22. Items can be found on the bottom floor of the library." },
+        { id: 23, q: "23. You must wear a hard hat on the construction site." },
+        { id: 24, q: "24. The library is downstairs on the east of the building." },
+        { id: 25, q: "25. If you have any questions in the exam, please raise your hands." },
+        { id: 26, q: "26. This semester will be from October to January." },
+        { id: 27, q: "27. Your car can park in the building behind the medical center." },
+        { id: 28, q: "28. A study skill seminar is on for the students who require assistance." },
+        { id: 29, q: "29. Would you pass me the textbook on that table?" },
+        { id: 30, q: "30. The investigation aims to find the stand of the problem." },
+        { id: 31, q: "31. There are various approaches for plagiarism across different university departments." },
+        { id: 32, q: "32. If you want to sell your book, it must have a bibliography." },
+        { id: 33, q: "33. The competency of language in the assignment is to use more formal words." },
+        { id: 34, q: "34. It is argued that students can learn more by collaborating rather than as individuals." },
+        { id: 35, q: "35. Students are not allowed to speak when they are in the examination hall." },
+        { id: 36, q: "36. Students are allowed to bring dictionaries to the exam." },
+        { id: 37, q: "37. Scientists are always asking the government for more money." },
+        { id: 38, q: "38. Higher education means higher pay and more opportunities you will get." },
+        { id: 39, q: "39. Students from various backgrounds can achieve a variety of qualifications." },
+        { id: 40, q: "40. We will change the classroom because this one is too small." },
+        { id: 41, q: "41. Car park permits can be obtained at the student service center." },
+        { id: 42, q: "42. Your abstract should contain the empirical evidence of your research." },
+        { id: 43, q: "43. 要点: ... it really depends on a person's situation." },
+        { id: 44, q: "44. The bus for London will leave ten minutes later than planned." },
+        { id: 45, q: "45. If you show your student card, you will get a discount." },
+        { id: 46, q: "46. After considering all the options she decided to take risks." },
+        { id: 47, q: "47. Experts cannot agree on a single definition of intelligence." },
+        { id: 48, q: "48. The literal output of this research is prolific and diverse." },
+        { id: 49, q: "49. It is expected that all students have their own laptops." },
+        { id: 50, q: "50. His particular interest is in the eighteenth century French society." },
+        { id: 51, q: "51. I think that to raise the issue and to talk about it is great." },
+        { id: 52, q: "52. The support and advice of lecturers within the department has been invaluable." },
+        { id: 53, q: "53. The professor plans to discuss issues in the news that reflect concepts taught in class." },
+        { id: 54, q: "54. Animal behavior appears to contain both similar and distinct aspects to that of humans." },
+        { id: 55, q: "55. Tomorrow evening, there will be a panel discussion on sustainable development." },
+        { id: 56, q: "56. Please note, submission deadlines are only negotiable in exceptional circumstances." },
+        { id: 57, q: "57. Eating a healthy breakfast can provide energy throughout the day." },
+        { id: 58, q: "58. The English expression is just a way of saying that age is not important." },
+        { id: 59, q: "59. Students can choose graduate certificate, graduate diploma and master course." },
+        { id: 60, q: "60. The trial experiment aims to increase interest in the issue and the jurisdiction clause." },
+        { id: 61, q: "61. 要点: Chocolate ... machine ..." },
+        { id: 62, q: "62. 要点: The active volcano is the most ... in the world." },
+        { id: 63, q: "63. The contemporary literature works have been broadened and extended through interpretation." },
+        { id: 64, q: "64. Newspapers around the country are reporting the stories of the president." },
+        { id: 65, q: "65. Today's lecture is canceled because the lecturer is ill." },
+        { id: 66, q: "66. There is not enough space for me in the car." },
+        { id: 67, q: "67. Remember your essay should have less than two thousand words." },
+        { id: 68, q: "68. The university policy on plagiarism can be viewed on the website." },
+        { id: 69, q: "69. Students should take advantage of the online help system before approaching their lecturers." },
+        { id: 70, q: "70. 要点: You may use your student ID ..." },
+        { id: 71, q: "71. We have three distinctive libraries which are nationally acclaimed." },
+        { id: 72, q: "72. Parking permits can be collected through the student service office." },
+        { id: 73, q: "73. If you forget your password, you need to contact the student center." },
+        { id: 74, q: "74. Students can download the lecture handouts from the course website." },
+        { id: 75, q: "75. I would like an egg and tomatoes on white sandwich bread with orange juice." },
+        { id: 76, q: "76. The health center is situated at the corner of the university behind the library." },
+        { id: 77, q: "77. The cafeteria closes soon but the snack machine is accessible throughout the night." },
+        { id: 78, q: "78. In this library, the reserve collection of books can be borrowed for up to three hours." },
+        { id: 79, q: "79. The number of company bankruptcy skyrocketed in the third quarter." },
+        { id: 80, q: "80. Companies aim to earn money, not to change society." },
+        { id: 81, q: "81. Animals grow larger and stronger to help them to hunt better." },
+        { id: 82, q: "82. Don’t hesitate to email me if you have any questions." },
+        { id: 83, q: "83. The hypothesis about black holes is rendered moot by the explanation of the explosion." },
+        { id: 84, q: "84. We want to attract the very best students regardless of their financial circumstances." },
+        { id: 85, q: "85. The minimal mark for Distinction to be awarded is 75%." },
+        { id: 86, q: "86. Number the beakers and put them away until tomorrow." },
+        { id: 87, q: "87. Organic food is grown without applying chemicals and the process is without artificial additives." },
+        { id: 88, q: "88. I would like tomato and cheese sandwiches on white bread and orange juice." },
+        { id: 89, q: "89. The residence hall is closed prior to the closing time of the academic building during the end of the semester." },
+        { id: 90, q: "90. The African elephant is the largest living land mammal in the world." },
+        { id: 91, q: "91. I think your watch is fast, you need to reset it." },
+        { id: 92, q: "92. Our university has strong partnerships with industry as well as collaborative relationships with government bodies." },
+        { id: 93, q: "93. What distinguishes him from others is his dramatic use of black and white photography." },
+        { id: 94, q: "94. One of the hardest things about starting university is finding your way around." },
+        { id: 95, q: "95. Leading scientists speculate that numerous planets could support life forms." },
+        { id: 96, q: "96. Once more under the pressure of economic necessity, practice outstripped theory." },
+        { id: 97, q: "97. Parental expectations are a major cause of stress among students." },
+        { id: 98, q: "98. Critics want the government to take this one stage further and ban the film altogether." },
+        { id: 99, q: "99. Meteorology is the detailed study of the Earth's atmosphere." },
+        { id: 100, q: "100. Unfortunately, the two most interesting economics electives clash on my timetable." },
+        { id: 101, q: "101. The United Kingdom is a constitutional monarchy and parliamentary democracy." },
+        { id: 102, q: "102. This part of the story is the story of my father." },
+        { id: 103, q: "103. Students are afraid of writing an essay because they have not learned how to do it." },
+        { id: 104, q: "104. Glass is not a true solid because it does not have a crystal structure." },
+        { id: 105, q: "105. Not everyone wants to keep in touch with their old school friends when they leave school, but I would like to." },
+        { id: 106, q: "106. There are on-going problems with over-consumption of junk food." },
+        { id: 107, q: "107. We know that sleep is essential for a normal life." }
+    ];
+    let current, practicedCount=0;
+    const totalCountEl=document.getElementById('total-count'), practicedCountEl=document.getElementById('practiced-count');
+    const questionEl=document.getElementById('question'), answerEl=document.getElementById('answer');
+    const showBtn=document.getElementById('show-answer-btn'), nextBtn=document.getElementById('next-btn');
+    const bookmarkBtn=document.getElementById('bookmark-btn'), viewBmBtn=document.getElementById('view-bookmarks-btn');
+    const viewAllBtn=document.getElementById('view-all-btn'), exportBtn=document.getElementById('export-btn');
+    const importFile=document.getElementById('import-file');
+    const bmModal=document.getElementById('bookmark-modal'), allModal=document.getElementById('all-modal');
+    const bmUL=document.getElementById('bookmarked-questions'), allUL=document.getElementById('all-questions');
+
+    function updateSessionInfo(){ practicedCountEl.textContent=practicedCount; totalCountEl.textContent=questions.length; }
+    function getBookmarks(){ return JSON.parse(localStorage.getItem('bookmarks')||'[]'); }
+    function saveBookmarks(b){ localStorage.setItem('bookmarks',JSON.stringify(b)); }
+    function updateBookmarkBtn(){ bookmarkBtn.textContent=getBookmarks().includes(current.id)?'Unbookmark':'Bookmark'; }
+
+    function loadRandom(){
+      practicedCount++; updateSessionInfo();
+      const idx=Math.floor(Math.random()*questions.length); current=questions[idx];
+      questionEl.textContent=current.q;
+      if(current.a){ answerEl.textContent=current.a; showBtn.style.display='inline-block'; } else { answerEl.style.display='none'; showBtn.style.display='none'; }
+      answerEl.style.display='none'; showBtn.textContent='Show Answer'; updateBookmarkBtn();
+    }
+
+    showBtn.addEventListener('click',()=>{
+      if(answerEl.style.display==='none'){ answerEl.style.display='block'; showBtn.textContent='Hide Answer'; }
+      else{ answerEl.style.display='none'; showBtn.textContent='Show Answer'; }
+    });
+
+    nextBtn.addEventListener('click',loadRandom);
+
+    bookmarkBtn.addEventListener('click',()=>{
+      const b=getBookmarks(), i=b.indexOf(current.id);
+      if(i>-1) b.splice(i,1); else b.push(current.id);
+      saveBookmarks(b); updateBookmarkBtn();
+    });
+
+    viewBmBtn.addEventListener('click',()=>{
+      bmUL.innerHTML=''; getBookmarks().forEach(id=>{
+        const fq=questions.find(x=>x.id===id);
+        if(fq){ const li=document.createElement('li'); li.textContent=fq.q; li.onclick=()=>{ current=fq; questionEl.textContent=fq.q; if(fq.a){ answerEl.textContent=fq.a; showBtn.style.display='inline-block'; } else showBtn.style.display='none'; answerEl.style.display='none'; updateBookmarkBtn(); bmModal.style.display='none'; }; bmUL.appendChild(li);} });
+      bmModal.style.display='block';
+    });
+    document.getElementById('close-bookmarks-btn').onclick=()=>bmModal.style.display='none';
+
+    viewAllBtn.addEventListener('click',()=>{
+      allUL.innerHTML=''; questions.forEach(q=>{
+        const li=document.createElement('li'); li.textContent=q.q; li.onclick=()=>{ current=q; questionEl.textContent=q.q; if(q.a){ answerEl.textContent=q.a; showBtn.style.display='inline-block'; } else showBtn.style.display='none'; answerEl.style.display='none'; updateBookmarkBtn(); allModal.style.display='none'; }; allUL.appendChild(li);
+      }); allModal.style.display='block';
+    });
+    document.getElementById('close-all-btn').onclick=()=>allModal.style.display='none';
+
+    exportBtn.addEventListener('click',()=>{
+      const data=JSON.stringify(getBookmarks()), blob=new Blob([data],{type:'application/json'}), url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='flashcard_bookmarks.json'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    importFile.addEventListener('change',e=>{ const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ const arr=JSON.parse(r.result); if(Array.isArray(arr)) saveBookmarks(arr); alert('Imported!'); }catch{alert('Invalid format');}}; r.readAsText(file); });
+
+    // init
+    updateSessionInfo(); loadRandom();
+  </script>
+</body>
+</html>
