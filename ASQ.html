@@ -2,35 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flashcard Practice</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-    .container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 90%; max-width: 600px; position: relative; }
-    .card { margin-bottom: 20px; }
-    .question { font-size: 1.2em; margin-bottom: 10px; }
-    .answer { font-size: 1.1em; margin-top: 10px; color: #333; }
-    button { padding: 10px 15px; margin-right: 10px; border: none; border-radius: 5px; cursor: pointer; }
+    /* Base styles */
+    html { font-size: 18px; }
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; }
+    .container { background: #fff; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px; position: relative; box-sizing: border-box; }
+
+    /* Text sizes */
+    .question { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .answer { font-size: 1.3rem; margin-top: 0.75rem; color: #333; }
+
+    /* Buttons */
+    button, input[type="file"] + label { padding: 0.75rem 1.25rem; margin: 0.25rem 0.25rem 0.25rem 0; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; }
     #show-answer-btn { background-color: #4CAF50; color: white; }
     #next-btn { background-color: #2196F3; color: white; }
     #bookmark-btn { background-color: #FF5722; color: white; }
     #view-bookmarks-btn { background-color: #9C27B0; color: white; }
-    .bookmark-list { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; z-index: 10; }
-    .bookmark-list h2 { margin-top: 0; }
+    #export-btn { background-color: #607D8B; color: white; }
+    #import-label { background-color: #009688; color: white; display: inline-block; }
+    #import-file { display: none; }
+
+    /* Bookmark list modal */
+    .bookmark-list { background: #fff; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; z-index: 10; }
+    .bookmark-list h2 { margin-top: 0; font-size: 1.6rem; }
     .bookmark-list ul { list-style: none; padding: 0; }
-    .bookmark-list li { margin-bottom: 10px; cursor: pointer; color: #2196F3; text-decoration: underline; }
-    #close-bookmarks-btn { background-color: #f44336; color: white; margin-top: 10px; }
+    .bookmark-list li { margin-bottom: 0.5rem; cursor: pointer; color: #2196F3; text-decoration: underline; font-size: 1.2rem; }
+    #close-bookmarks-btn { background-color: #f44336; color: white; }
+
+    /* Responsive adjustments */
+    @media (max-width: 400px) {
+      html { font-size: 16px; }
+      button, input[type="file"] + label { font-size: 0.9rem; padding: 0.6rem 1rem; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div id="card" class="card">
+    <div id="card">
       <p id="question" class="question"></p>
       <button id="show-answer-btn">Show Answer</button>
       <p id="answer" class="answer" style="display:none;"></p>
       <button id="bookmark-btn">Bookmark</button>
     </div>
-    <button id="next-btn">Next Question</button>
-    <button id="view-bookmarks-btn">View Bookmarks</button>
+    <div style="margin-top:1rem;">
+      <button id="next-btn">Next Question</button>
+      <button id="view-bookmarks-btn">View Bookmarks</button>
+      <button id="export-btn">Export Bookmarks</button>
+      <input type="file" id="import-file" accept="application/json" />
+      <label for="import-file" id="import-label">Import Bookmarks</label>
+    </div>
     <div id="bookmark-list" class="bookmark-list" style="display:none;">
       <h2>Bookmarked Questions</h2>
       <ul id="bookmarked-questions"></ul>
@@ -39,105 +61,105 @@
   </div>
   <script>
     const questions = [
-      { id:1, q: "1. What do we call the phenomenon that a volcano throws out lava, ash and steam?", a: "Erupt / eruption" },
-      { id:2, q: "2. What do we call the party in power?", a: "Ruling party" },
-      { id:3, q: "3. Ears are for hearing. What are eyes for?", a: "Vision" },
-      { id:4, q: "4. What do we call the long, orange thing that grows underground?", a: "Carrot" },
-      { id:5, q: "5. What's the grey thing in the sky when it's about to rain?", a: "Cloud" },
-      { id:6, q: "6. What do we call a man who is getting married?", a: "Groom / bridegroom" },
-      { id:7, q: "7. What do we call the thing that covers a bride's face?", a: "Veil" },
-      { id:8, q: "8. What subject studies the science of animal behavior?", a: "Ethology" },
-      { id:9, q: "9. What do we call a person who writes and checks financial reports?", a: "Accountant / Auditor" },
-      { id:10, q: "10. What do we call the type of energy that uses uranium to generate electricity?", a: "Nuclear energy / Nuclear power" },
-      { id:11, q: "11. What do we call a liquid that is used for washing hair?", a: "Shampoo" },
-      { id:12, q: "12. What do you use to dry your body after a shower?", a: "Towel" },
-      { id:13, q: "13. What is the opposite of negative?", a: "Positive" },
-      { id:14, q: "14. 要点:", a: "" },
-      { id:15, q: "15. What are breakfast, lunch, and dinner examples of?", a: "Meal" },
-      { id:16, q: "16. Which continent is Canada located in?", a: "North America" },
-      { id:17, q: "17. What is the generic term for a person who once had the same title as you have now?", a: "Predecessor" },
-      { id:18, q: "18. What type of body covering helps to insulate burns?", a: "Dressing / bandage" },
-      { id:19, q: "19. What do we say if we call brothers and sisters in a same way?", a: "Siblings" },
-      { id:20, q: "20. What do we call a person who trains a team in a particular sport?", a: "Coach" },
-      { id:21, q: "21. What geometric shape are circumference, diameter and radius related with?", a: "Circle" },
-      { id:22, q: "22. How many years are there in a half of a decade?", a: "Five" },
-      { id:23, q: "23. What do you call the brother of your father or mother?", a: "Uncle" },
-      { id:24, q: "24. What is the top surface inside the room?", a: "Ceiling" },
-      { id:25, q: "25. Which one of the following is not a mythological animal, unicorn, giraffe, dragon or mermaid?", a: "Giraffe" },
-      { id:26, q: "26. What do we call the people who move from one country to another country, usually for work or a better life?", a: "Migrants" },
-      { id:27, q: "27. How do we describe the food that is not cooked?", a: "Raw / uncooked" },
-      { id:28, q: "28. What do we call the line between a sunset and the sea?", a: "Sea-sky-line / horizon" },
-      { id:29, q: "29. Which part of the body is related to the word \"optical\"?", a: "Eye" },
-      { id:30, q: "30. What is the antonym of 'entrance'?", a: "Exit" },
-      { id:31, q: "31. What does the word 'T V' stand for?", a: "Television" },
-      { id:32, q: "32. What do we call a political institution or body that is responsible for a country?", a: "Government" },
-      { id:33, q: "33. What do we call buying and transporting goods from another country?", a: "Import" },
-      { id:34, q: "34. What do we call a short piece of writing containing the main ideas in a document?", a: "Abstract / summary" },
-      { id:35, q: "35. What do we call a person who is in charge of a meeting?", a: "Chairman / chairwoman / chairperson" },
-      { id:36, q: "36. What do we call a horse-like animal with a single horn on the head?", a: "Unicorn" },
-      { id:37, q: "37. What is the verb that describes traveling on boat?", a: "Cruise / voyage / sail" },
-      { id:38, q: "38. Where do passengers stand waiting for a train in the railway station?", a: "Platform" },
-      { id:39, q: "39. What is the storyline or the series of scenes of novels, movies, short stories or plays?", a: "Plot / scenario" },
-      { id:40, q: "40. What do we call a child who will soon be a teenager?", a: "preteen / tween" },
-      { id:41, q: "41. What do you call a person who lives next to your house?", a: "neighbor" },
-      { id:42, q: "42. What do people usually use to cut food in the plate?", a: "Knife" },
-      { id:43, q: "43. 要点: What do we call a long narrow piece of land almost completely surrounded by water?", a: "peninsula" },
-      { id:44, q: "44. 要点: There are three eggs, what is the location of the special egg?", a: "on the right" },
-      { id:45, q: "45. 要点: What is this instrument?", a: "Telescope" },
-      { id:46, q: "46. What is the term used to describe a period of seven days?", a: "week" },
-      { id:47, q: "47. How do you describe a line that segments a circle?", a: "chord" },
-      { id:48, q: "48. If someone tells something funny to you, what is your reaction?", a: "laugh / laughing" },
-      { id:49, q: "49. What do you call the word type like 'UK', or 'USA'?", a: "Acronym" },
-      { id:50, q: "50. What do we call a machine which carries people from one floor to another in a high building?", a: "lift / lyft / elevator" },
-      { id:51, q: "51. What clothing do people wear, such as students or nurses, to show that they belong to the same organizations?", a: "uniform" },
-      { id:52, q: "52. What will you hear after a flash of lightning?", a: "thunder" },
-      { id:53, q: "53. What do we call a person who writes a book?", a: "author / writer" },
-      { id:54, q: "54. Where is a criminal kept as punishment?", a: "prison / jail" },
-      { id:55, q: "55. Whose job is making and repairing wooden objects and structures?", a: "carpenter" },
-      { id:56, q: "56. What is the frozen type of water called?", a: "ice" },
-      { id:57, q: "57. What is the highest position in the embassy?", a: "ambassador" },
-      { id:58, q: "58. In the solar system, which heavenly body produces sunshine?", a: "sun" },
-      { id:59, q: "59. If you have a toothache, who will you go to?", a: "dentist" },
-      { id:60, q: "60. What is the thing used for sun protection in summer?", a: "Sunscreen / sunblock / suncream / suntan lotion" },
-      { id:61, q: "61. What is a word or expression that has the same or nearly the same meaning as another in the same language?", a: "synonym" },
-      { id:62, q: "62. Which part of our bodies do we use nasal spray in?", a: "nose / nostril" },
-      { id:63, q: "63. What is the occupation that transfers one language to another language?", a: "translator" },
-      { id:64, q: "64. What force makes humans stay on the earth?", a: "gravity" },
-      { id:65, q: "65. How many sides are there in a pentagon?", a: "five" },
-      { id:66, q: "66. What do we call the person who plays musical instruments as a job?", a: "musician" },
-      { id:67, q: "67. Where do people go to watch plays?", a: "theatre / theater" },
-      { id:68, q: "68. How many years are there in a bicentennial?", a: "two hundred" },
-      { id:69, q: "69. What is the place you share bedroom with your classmates?", a: "dormitory" },
-      { id:70, q: "70. What is the room that is under the ground floor?", a: "basement" },
-      { id:71, q: "71. In the word 'postgraduate', what does the 'post' mean?", a: "After" },
-      { id:72, q: "72. If a newspaper published every day is daily, a magazine published every week is weekly, what do we call a magazine published four times a year?", a: "Quarterly" },
-      { id:73, q: "73. Who sits in the cockpit of an airplane?", a: "pilot" },
-      { id:74, q: "74. Which part of your leg can make it possible to bend?", a: "knee" },
-      { id:75, q: "75. What do we call the first paragraph of a report?", a: "introduction" },
-      { id:76, q: "76. How do you call a student that has finished his first year?", a: "Sophomore" },
-      { id:77, q: "77. What does the sun do during dawn?", a: "sunrise" },
-      { id:78, q: "78. If a couple have a pair of children, how many children do they have?", a: "two" },
-      { id:79, q: "79. Which kind of mountain can erupt lava?", a: "Volcano / Volcanos" },
-      { id:80, q: "80. What is the opposite of positive?", a: "negative" },
-      { id:81, q: "81. A dozen is a grouping of which number?", a: "twelve" },
-      { id:82, q: "82. What kind of dictionary provides synonyms, antonyms and related words?", a: "thesaurus" },
-      { id:83, q: "83. What is the opposite to “predecessor”?", a: "successor" },
-      { id:84, q: "84. What does a sundial measure?", a: "Time" },
-      { id:85, q: "85. How many years are there in a decade?", a: "ten years" },
-      { id:86, q: "86. What kind of liquid do mammals feed their babies?", a: "milk" },
-      { id:87, q: "87. Some calendars begin the week on Sunday, what is the other day which commonly starts a week?", a: "monday" },
-      { id:88, q: "88. What is the ceremony called for marriage?", a: "Wedding" },
-      { id:89, q: "89. What is the name of the field of study that studies the human mind and behavior?", a: "psychology" },
-      { id:90, q: "90. How many days are there in a week?", a: "Seven" },
-      { id:91, q: "91. Where would you expect to find equipment like microscopes, a Bunsen burner, beaker and petri dish?", a: "Laboratory / lab" },
-      { id:92, q: "92. What do we call a period of ten years?", a: "decade" },
-      { id:93, q: "93. What is the job of someone that looks after your teeth and gums?", a: "dentist / surgeon dentist" },
-      { id:94, q: "94. What special document do most people need to carry when they travel between countries?", a: "passport" },
-      { id:95, q: "95. What is the name of ceremony in which two people get married?", a: "wedding" },
-      { id:96, q: "96. Which item of cutlery has several prongs usually three?", a: "Fork" },
-      { id:97, q: "97. Which sweet food is produced by bees?", a: "Honey" },
-      { id:98, q: "98. How many years does a millennium have?", a: "One thousand / a thousand" },
-      { id:99, q: "99. If telescopes are used to locate distant objects, what instrument is employed to magnify minuscule objects?", a: "Microscope / microscopes" }
+        { id:1, q: "1. What do we call the phenomenon that a volcano throws out lava, ash and steam?", a: "Erupt / eruption" },
+        { id:2, q: "2. What do we call the party in power?", a: "Ruling party" },
+        { id:3, q: "3. Ears are for hearing. What are eyes for?", a: "Vision" },
+        { id:4, q: "4. What do we call the long, orange thing that grows underground?", a: "Carrot" },
+        { id:5, q: "5. What's the grey thing in the sky when it's about to rain?", a: "Cloud" },
+        { id:6, q: "6. What do we call a man who is getting married?", a: "Groom / bridegroom" },
+        { id:7, q: "7. What do we call the thing that covers a bride's face?", a: "Veil" },
+        { id:8, q: "8. What subject studies the science of animal behavior?", a: "Ethology" },
+        { id:9, q: "9. What do we call a person who writes and checks financial reports?", a: "Accountant / Auditor" },
+        { id:10, q: "10. What do we call the type of energy that uses uranium to generate electricity?", a: "Nuclear energy / Nuclear power" },
+        { id:11, q: "11. What do we call a liquid that is used for washing hair?", a: "Shampoo" },
+        { id:12, q: "12. What do you use to dry your body after a shower?", a: "Towel" },
+        { id:13, q: "13. What is the opposite of negative?", a: "Positive" },
+        { id:14, q: "14. 要点:", a: "" },
+        { id:15, q: "15. What are breakfast, lunch, and dinner examples of?", a: "Meal" },
+        { id:16, q: "16. Which continent is Canada located in?", a: "North America" },
+        { id:17, q: "17. What is the generic term for a person who once had the same title as you have now?", a: "Predecessor" },
+        { id:18, q: "18. What type of body covering helps to insulate burns?", a: "Dressing / bandage" },
+        { id:19, q: "19. What do we say if we call brothers and sisters in a same way?", a: "Siblings" },
+        { id:20, q: "20. What do we call a person who trains a team in a particular sport?", a: "Coach" },
+        { id:21, q: "21. What geometric shape are circumference, diameter and radius related with?", a: "Circle" },
+        { id:22, q: "22. How many years are there in a half of a decade?", a: "Five" },
+        { id:23, q: "23. What do you call the brother of your father or mother?", a: "Uncle" },
+        { id:24, q: "24. What is the top surface inside the room?", a: "Ceiling" },
+        { id:25, q: "25. Which one of the following is not a mythological animal, unicorn, giraffe, dragon or mermaid?", a: "Giraffe" },
+        { id:26, q: "26. What do we call the people who move from one country to another country, usually for work or a better life?", a: "Migrants" },
+        { id:27, q: "27. How do we describe the food that is not cooked?", a: "Raw / uncooked" },
+        { id:28, q: "28. What do we call the line between a sunset and the sea?", a: "Sea-sky-line / horizon" },
+        { id:29, q: "29. Which part of the body is related to the word \"optical\"?", a: "Eye" },
+        { id:30, q: "30. What is the antonym of 'entrance'?", a: "Exit" },
+        { id:31, q: "31. What does the word 'T V' stand for?", a: "Television" },
+        { id:32, q: "32. What do we call a political institution or body that is responsible for a country?", a: "Government" },
+        { id:33, q: "33. What do we call buying and transporting goods from another country?", a: "Import" },
+        { id:34, q: "34. What do we call a short piece of writing containing the main ideas in a document?", a: "Abstract / summary" },
+        { id:35, q: "35. What do we call a person who is in charge of a meeting?", a: "Chairman / chairwoman / chairperson" },
+        { id:36, q: "36. What do we call a horse-like animal with a single horn on the head?", a: "Unicorn" },
+        { id:37, q: "37. What is the verb that describes traveling on boat?", a: "Cruise / voyage / sail" },
+        { id:38, q: "38. Where do passengers stand waiting for a train in the railway station?", a: "Platform" },
+        { id:39, q: "39. What is the storyline or the series of scenes of novels, movies, short stories or plays?", a: "Plot / scenario" },
+        { id:40, q: "40. What do we call a child who will soon be a teenager?", a: "preteen / tween" },
+        { id:41, q: "41. What do you call a person who lives next to your house?", a: "neighbor" },
+        { id:42, q: "42. What do people usually use to cut food in the plate?", a: "Knife" },
+        { id:43, q: "43. 要点: What do we call a long narrow piece of land almost completely surrounded by water?", a: "peninsula" },
+        { id:44, q: "44. 要点: There are three eggs, what is the location of the special egg?", a: "on the right" },
+        { id:45, q: "45. 要点: What is this instrument?", a: "Telescope" },
+        { id:46, q: "46. What is the term used to describe a period of seven days?", a: "week" },
+        { id:47, q: "47. How do you describe a line that segments a circle?", a: "chord" },
+        { id:48, q: "48. If someone tells something funny to you, what is your reaction?", a: "laugh / laughing" },
+        { id:49, q: "49. What do you call the word type like 'UK', or 'USA'?", a: "Acronym" },
+        { id:50, q: "50. What do we call a machine which carries people from one floor to another in a high building?", a: "lift / lyft / elevator" },
+        { id:51, q: "51. What clothing do people wear, such as students or nurses, to show that they belong to the same organizations?", a: "uniform" },
+        { id:52, q: "52. What will you hear after a flash of lightning?", a: "thunder" },
+        { id:53, q: "53. What do we call a person who writes a book?", a: "author / writer" },
+        { id:54, q: "54. Where is a criminal kept as punishment?", a: "prison / jail" },
+        { id:55, q: "55. Whose job is making and repairing wooden objects and structures?", a: "carpenter" },
+        { id:56, q: "56. What is the frozen type of water called?", a: "ice" },
+        { id:57, q: "57. What is the highest position in the embassy?", a: "ambassador" },
+        { id:58, q: "58. In the solar system, which heavenly body produces sunshine?", a: "sun" },
+        { id:59, q: "59. If you have a toothache, who will you go to?", a: "dentist" },
+        { id:60, q: "60. What is the thing used for sun protection in summer?", a: "Sunscreen / sunblock / suncream / suntan lotion" },
+        { id:61, q: "61. What is a word or expression that has the same or nearly the same meaning as another in the same language?", a: "synonym" },
+        { id:62, q: "62. Which part of our bodies do we use nasal spray in?", a: "nose / nostril" },
+        { id:63, q: "63. What is the occupation that transfers one language to another language?", a: "translator" },
+        { id:64, q: "64. What force makes humans stay on the earth?", a: "gravity" },
+        { id:65, q: "65. How many sides are there in a pentagon?", a: "five" },
+        { id:66, q: "66. What do we call the person who plays musical instruments as a job?", a: "musician" },
+        { id:67, q: "67. Where do people go to watch plays?", a: "theatre / theater" },
+        { id:68, q: "68. How many years are there in a bicentennial?", a: "two hundred" },
+        { id:69, q: "69. What is the place you share bedroom with your classmates?", a: "dormitory" },
+        { id:70, q: "70. What is the room that is under the ground floor?", a: "basement" },
+        { id:71, q: "71. In the word 'postgraduate', what does the 'post' mean?", a: "After" },
+        { id:72, q: "72. If a newspaper published every day is daily, a magazine published every week is weekly, what do we call a magazine published four times a year?", a: "Quarterly" },
+        { id:73, q: "73. Who sits in the cockpit of an airplane?", a: "pilot" },
+        { id:74, q: "74. Which part of your leg can make it possible to bend?", a: "knee" },
+        { id:75, q: "75. What do we call the first paragraph of a report?", a: "introduction" },
+        { id:76, q: "76. How do you call a student that has finished his first year?", a: "Sophomore" },
+        { id:77, q: "77. What does the sun do during dawn?", a: "sunrise" },
+        { id:78, q: "78. If a couple have a pair of children, how many children do they have?", a: "two" },
+        { id:79, q: "79. Which kind of mountain can erupt lava?", a: "Volcano / Volcanos" },
+        { id:80, q: "80. What is the opposite of positive?", a: "negative" },
+        { id:81, q: "81. A dozen is a grouping of which number?", a: "twelve" },
+        { id:82, q: "82. What kind of dictionary provides synonyms, antonyms and related words?", a: "thesaurus" },
+        { id:83, q: "83. What is the opposite to “predecessor”?", a: "successor" },
+        { id:84, q: "84. What does a sundial measure?", a: "Time" },
+        { id:85, q: "85. How many years are there in a decade?", a: "ten years" },
+        { id:86, q: "86. What kind of liquid do mammals feed their babies?", a: "milk" },
+        { id:87, q: "87. Some calendars begin the week on Sunday, what is the other day which commonly starts a week?", a: "monday" },
+        { id:88, q: "88. What is the ceremony called for marriage?", a: "Wedding" },
+        { id:89, q: "89. What is the name of the field of study that studies the human mind and behavior?", a: "psychology" },
+        { id:90, q: "90. How many days are there in a week?", a: "Seven" },
+        { id:91, q: "91. Where would you expect to find equipment like microscopes, a Bunsen burner, beaker and petri dish?", a: "Laboratory / lab" },
+        { id:92, q: "92. What do we call a period of ten years?", a: "decade" },
+        { id:93, q: "93. What is the job of someone that looks after your teeth and gums?", a: "dentist / surgeon dentist" },
+        { id:94, q: "94. What special document do most people need to carry when they travel between countries?", a: "passport" },
+        { id:95, q: "95. What is the name of ceremony in which two people get married?", a: "wedding" },
+        { id:96, q: "96. Which item of cutlery has several prongs usually three?", a: "Fork" },
+        { id:97, q: "97. Which sweet food is produced by bees?", a: "Honey" },
+        { id:98, q: "98. How many years does a millennium have?", a: "One thousand / a thousand" },
+        { id:99, q: "99. If telescopes are used to locate distant objects, what instrument is employed to magnify minuscule objects?", a: "Microscope / microscopes" }
     ];
     let current;
     const questionEl = document.getElementById('question');
@@ -146,6 +168,8 @@
     const nextBtn = document.getElementById('next-btn');
     const bookmarkBtn = document.getElementById('bookmark-btn');
     const viewBtn = document.getElementById('view-bookmarks-btn');
+    const exportBtn = document.getElementById('export-btn');
+    const importFile = document.getElementById('import-file');
     const bmListEl = document.getElementById('bookmark-list');
     const bmUL = document.getElementById('bookmarked-questions');
 
@@ -161,46 +185,59 @@
 
     showBtn.addEventListener('click', () => {
       if (answerEl.style.display === 'none') {
-        answerEl.style.display = 'block';
-        showBtn.textContent = 'Hide Answer';
+        answerEl.style.display = 'block'; showBtn.textContent = 'Hide Answer';
       } else {
-        answerEl.style.display = 'none';
-        showBtn.textContent = 'Show Answer';
+        answerEl.style.display = 'none'; showBtn.textContent = 'Show Answer';
       }
     });
-
     nextBtn.addEventListener('click', loadRandom);
 
-    function getBookmarks() {
-      return JSON.parse(localStorage.getItem('bookmarks') || '[]');
-    }
-    function saveBookmarks(arr) {
-      localStorage.setItem('bookmarks', JSON.stringify(arr));
-    }
+    /* Bookmark storage and sync via export/import */
+    function getBookmarks() { return JSON.parse(localStorage.getItem('bookmarks') || '[]'); }
+    function saveBookmarks(arr) { localStorage.setItem('bookmarks', JSON.stringify(arr)); }
     function updateBookmarkBtn() {
       const bms = getBookmarks();
-      if (bms.includes(current.id)) {
-        bookmarkBtn.textContent = 'Unbookmark';
-      } else {
-        bookmarkBtn.textContent = 'Bookmark';
-      }
+      bookmarkBtn.textContent = bms.includes(current.id) ? 'Unbookmark' : 'Bookmark';
     }
     bookmarkBtn.addEventListener('click', () => {
       const bms = getBookmarks();
       const i = bms.indexOf(current.id);
-      if (i > -1) {
-        bms.splice(i,1);
-      } else {
-        bms.push(current.id);
-      }
+      if (i > -1) bms.splice(i, 1);
+      else bms.push(current.id);
       saveBookmarks(bms);
       updateBookmarkBtn();
     });
 
+    /* Export bookmarks as JSON file */
+    exportBtn.addEventListener('click', () => {
+      const data = JSON.stringify(getBookmarks());
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'flashcard_bookmarks.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    /* Import bookmarks from JSON file */
+    importFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const arr = JSON.parse(reader.result);
+          if (Array.isArray(arr)) saveBookmarks(arr);
+          alert('Bookmarks imported successfully!');
+        } catch (err) { alert('Invalid file format.'); }
+      };
+      reader.readAsText(file);
+    });
+
+    /* View bookmarks */
     viewBtn.addEventListener('click', () => {
       bmUL.innerHTML = '';
-      const bms = getBookmarks();
-      bms.forEach(id => {
+      getBookmarks().forEach(id => {
         const fq = questions.find(x => x.id === id);
         if (fq) {
           const li = document.createElement('li');
@@ -210,7 +247,6 @@
             questionEl.textContent = fq.q;
             answerEl.textContent = fq.a;
             answerEl.style.display = 'none';
-            showBtn.textContent = 'Show Answer';
             updateBookmarkBtn();
             bmListEl.style.display = 'none';
           });
@@ -219,12 +255,9 @@
       });
       bmListEl.style.display = 'block';
     });
+    document.getElementById('close-bookmarks-btn').addEventListener('click', () => { bmListEl.style.display = 'none'; });
 
-    document.getElementById('close-bookmarks-btn').addEventListener('click', () => {
-      bmListEl.style.display = 'none';
-    });
-
-    // Initialize
+    // Initialize on load
     loadRandom();
   </script>
 </body>
