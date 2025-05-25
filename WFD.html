@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcard Practice Extended</title>
+  <style>
+    html { font-size: 18px; }
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; }
+    .container { background: #fff; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px; position: relative; box-sizing: border-box; }
+    .info { font-size: 1.2rem; margin-bottom: 1rem; color: #555; }
+    .question { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .answer { font-size: 1.3rem; margin-top: 0.75rem; color: #333; }
+    button, input[type="file"] + label { padding: 0.75rem 1.25rem; margin: 0.25rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; }
+    #show-answer-btn { background-color: #4CAF50; color: white; }
+    #next-btn { background-color: #2196F3; color: white; }
+    #bookmark-btn { background-color: #FF5722; color: white; }
+    #view-bookmarks-btn { background-color: #9C27B0; color: white; }
+    #view-all-btn { background-color: #795548; color: white; }
+    #export-btn { background-color: #607D8B; color: white; }
+    #import-label { background-color: #009688; color: white; display: inline-block; }
+    #import-file { display: none; }
+    .modal { background: #fff; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; z-index: 10; display: none; }
+    .modal h2 { margin-top: 0; font-size: 1.6rem; }
+    .modal ul { list-style: none; padding: 0; }
+    .modal li { margin-bottom: 0.5rem; cursor: pointer; color: #2196F3; text-decoration: underline; font-size: 1.2rem; }
+    .modal button.close-btn { background-color: #f44336; color: white; }
+    @media (max-width: 400px) {
+      html { font-size: 16px; }
+      button, input[type="file"] + label { font-size: 0.9rem; padding: 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="info">
+      Practiced: <span id="practiced-count">0</span> / <span id="total-count"></span>
+    </div>
+    <div id="card">
+      <p id="question" class="question"></p>
+      <button id="show-answer-btn">Show Answer</button>
+      <p id="answer" class="answer" style="display:none;"></p>
+      <button id="bookmark-btn">Bookmark</button>
+    </div>
+    <div style="margin-top:1rem;">
+      <button id="next-btn">Next Question</button>
+      <button id="view-bookmarks-btn">View Bookmarks</button>
+      <button id="view-all-btn">View All Questions</button>
+      <button id="export-btn">Export Bookmarks</button>
+      <input type="file" id="import-file" accept="application/json" />
+      <label for="import-file" id="import-label">Import Bookmarks</label>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="bookmark-modal" class="modal">
+    <h2>Bookmarked Questions</h2>
+    <ul id="bookmarked-questions"></ul>
+    <button class="close-btn" id="close-bookmarks-btn">Close</button>
+  </div>
+  <div id="all-modal" class="modal">
+    <h2>All Questions</h2>
+    <ul id="all-questions"></ul>
+    <button class="close-btn" id="close-all-btn">Close</button>
+  </div>
+
+  <script>
+    const questions = [
+        { id: 1, q: "Many student do not know how to write an essay because ...." },
+        { id: 2, q: "The study of utilizing projects is funded by the university." },
+        { id: 3, q: "Sugar is a compound including carbon, hydrogen and oxygen atoms." },
+        { id: 4, q: "This topic is interesting in parliament." },
+        { id: 5, q: "Parents' talk to children tends to be simplified." },
+        { id: 6, q: "... construction ... includes(or including) gigantic gas terminals." },
+        { id: 7, q: "Social policy is a study of social respondence for the government." },
+        { id: 8, q: "Assignments must be submitted at the end of the term." },
+        { id: 9, q: "Students can find news about climate change." },
+        { id: 10, q: "The staff is cleaning the room for tomorrow morning's meeting." },
+        { id: 11, q: "Extension requirement for the assignment must be submitted before the deadline." },
+        { id: 12, q: "Some studies show the link between depression and social media." },
+        { id: 13, q: "Each faculty has a dedicated specialized librarian available in the term examination." },
+        { id: 14, q: "Music has the ability to shape our emotions." },
+        { id: 15, q: "Mental health professionals are talking about the topic of vulnerability." },
+        { id: 16, q: "Your tutor will provide the guidance on how to structure the essays." },
+        { id: 17, q: "Medical books and journals have been moved to the second floor." },
+        { id: 18, q: "Gold is a metal that occurs naturally in a pure state." },
+        { id: 19, q: "It is argued that students can learn more by collaboration rather than as individuals." },
+        { id: 20, q: "Employment figures will decrease in the next few years." },
+        { id: 21, q: "How many styles in the ... next Monday." },
+        { id: 22, q: "Criminal charges will be brought against all of the men." },
+        { id: 23, q: "Intelligence ... technology scientific ... machine ..." },
+        { id: 24, q: "Writing history needs a careful selection process of diverse sources." },
+        { id: 25, q: "Writing history is needed ...... collecting ......" },
+        { id: 26, q: "The Academic school shows excellent ..." },
+        { id: 27, q: "Innovation can help you ..." },
+        { id: 28, q: "Social media is responsible for helping the government to solve social problems." },
+        { id: 29, q: "Urbanization increases the costs for other communities." },
+        { id: 30, q: "Students are encouraged to read new books recommended by Professor Jones." },
+        { id: 31, q: "We can see the stars that were formed thirteen billion years ago." },
+        { id: 32, q: "The horizontal line on the graph indicates that there was no change in the period." },
+        { id: 33, q: "Agricultural development is vital for poor rural areas." },
+        { id: 34, q: "For the purpose of research, data should be collected and analyzed." },
+        { id: 35, q: "The biology department is respected in research activities." },
+        { id: 36, q: "The news will not be received until the following week." },
+        { id: 37, q: "Formal conclusions could be established through rigorous experiments." },
+        { id: 38, q: "Our facility includes five libraries across the university." },
+        { id: 39, q: "Muscle cells bring parts of the body closer together." },
+        { id: 40, q: "The timetable for the next term will be available next week." },
+        { id: 41, q: "The student union hosts a variety of social events." },
+        { id: 42, q: "Most of the lectures begin promptly, so do not be late." },
+        { id: 43, q: "Tomorrow's lecture has been canceled due to the power cut." },
+        { id: 44, q: "Optional tutorials are offered in the final week of a term." },
+        { id: 45, q: "The university will cease the colossal renovation of the faint empty theater." },
+        { id: 46, q: "A wide range of courses covered different aspects in this subject." },
+        { id: 47, q: "The archeologists were astonished by the unexpected previously overlooked foundations." },
+        { id: 48, q: "Globalization has been an overwhelming urbanization phenomenon." },
+        { id: 49, q: "The study is among the initial projects funded by the university." },
+        { id: 50, q: "More research is required in the field of food science." },
+        { id: 51, q: "You should submit your term papers to the general office." },
+        { id: 52, q: "... key business partners .... expand ... on bank account ... lots of entertainment…" },
+        { id: 53, q: "Practical experience is a vital part of legal training." },
+        { id: 54, q: "The course places considerable emphasis on critical thinking skills." },
+        { id: 55, q: "Classical mechanics is sometimes considered as a branch of applied mathematics." },
+        { id: 56, q: "Global connections increased in academic communities, thanks to social media." },
+        { id: 57, q: "Students are required to have an undergraduate degree in biology to be enrolled in this course." },
+        { id: 58, q: "Scientists have found all parts of science today." },
+        { id: 59, q: "Graduates from this course typically pursue careers in the financial sector." },
+        { id: 60, q: "The typical part of this course involves the study of society." },
+        { id: 61, q: "Lecture outlines are available on the faculty board and the internal website." },
+        { id: 62, q: "Global connections thrive in academic communities, thanks to social media." },
+        { id: 63, q: "Many food crops require a large amount of water and fertilizer." },
+        { id: 64, q: "Information technology has changed the way people study today." },
+        { id: 65, q: "Advanced technology will create growth in the economy." },
+        { id: 66, q: "Food containing ample calories provides little or no nutritional value." },
+        { id: 67, q: "The students will meet their new teachers after the summer vacation." },
+        { id: 68, q: "The rising inflation rate indicates a decrease in demand for consumer products." },
+        { id: 69, q: "Assignments should be submitted to the department office before the deadline." },
+        { id: 70, q: "Thousands of people turned out to be at the presidential address." },
+        { id: 71, q: "All industries consist of systems of inputs, processes, outputs and feedback." },
+        { id: 72, q: "The untapped potential of using the sun's rays is phenomenal." },
+        { id: 73, q: "The closing date of application for travel scholarship is next Monday." },
+        { id: 74, q: "We are continuing to provide postgraduate online learning resources." },
+        { id: 75, q: "Undergraduate students can select what interests them most in the science program." },
+        { id: 76, q: "The university's main library will be open till midnight next Saturday." },
+        { id: 77, q: "We are more able to accommodate postgraduate students than previously possible." },
+        { id: 78, q: "Medical researchers have focused on the causes of diseases and treatments." },
+        { id: 79, q: "The falling birth rate means the number of students drops." },
+        { id: 80, q: "If you need a parking ticket, see me after the lecture." },
+        { id: 81, q: "The study of history can provide unique insight." },
+        { id: 82, q: "He wrote poetry and plays as well as scientific papers." },
+        { id: 83, q: "Companies' projects must adapt to the general data protection regulations." },
+        { id: 84, q: "Our workshops are open for all students on campus." },
+        { id: 85, q: "Scientific experiments should be repeated to verify the results." },
+        { id: 86, q: "New developments in technology are influencing current research." },
+        { id: 87, q: "Most known oil reserves will only last for half a century." },
+        { id: 88, q: "Our aim is to transform classical teaching in the classroom." },
+        { id: 89, q: "The terms illness and disease are confusing despite clear differences." },
+        { id: 90, q: "Online courses allow students to work at their own pace." },
+        { id: 91, q: "We are phasing out the disposable cups on campus." },
+        { id: 92, q: "Many universities are continuously expanding the postgraduate education's online learning resources." },
+        { id: 93, q: "Please refer to the guidelines for more information on setting the goals." },
+        { id: 94, q: "The teaching staff are actively engaged in the original research." },
+        { id: 95, q: "Business practices must obey contemporary general regulations." },
+        { id: 96, q: "Businesses must adapt to the general data protection regulations." },
+        { id: 97, q: "The urban geography degree includes the study of demography." },
+        { id: 98, q: "Technology is no longer a simple tool that we can control." },
+        { id: 99, q: "Students may only park their cars in authorized university parking spaces." },
+        { id: 100, q: "These words recognize the excellence of the undergraduates' research projects." },
+        { id: 101, q: "The public is often misled by the biased coverage." },
+        { id: 102, q: "Our company currently employs more than ten thousand people worldwide." },
+        { id: 103, q: "Rising inflation leads to increasing goods prices and decreasing demand for products." },
+        { id: 104, q: "It is clear that the human population impacts the environment." },
+        { id: 105, q: "We help students to develop their individualities and follow their interests." },
+        { id: 106, q: "This course can help to deepen your appreciation of art." },
+        { id: 107, q: "The university library holds a number of collections of geological maps." },
+        { id: 108, q: "The degree is typically taught by using a mixture of lectures and seminars." },
+        { id: 109, q: "An essay should use evidence from both primary and secondary sources." },
+        { id: 110, q: "A surprisingly large number of students applied for that course." },
+        { id: 111, q: "Our company must have independent financial auditing." },
+        { id: 112, q: "The amount of time spent on configuration varies considerably." },
+        { id: 113, q: "Please make sure your application follows the guidelines provided." },
+        { id: 114, q: "It is an integrated course with several main elements." },
+        { id: 115, q: "For the small businesses, making profit is the main priority." },
+        { id: 116, q: "Academic journals are usually edited by subject specialists." },
+        { id: 117, q: "There is no economic reason why public borrowing is necessarily bad." },
+        { id: 118, q: "Understanding visual media has never been more challenging." },
+        { id: 119, q: "Libraries in many areas were closed due to the lack of funding." },
+        { id: 120, q: "The student magazine is looking for a new editor." },
+        { id: 121, q: "Accommodation on campus is limited, but there are more options nearby." },
+        { id: 122, q: "There are a variety of different ways to present statistical information." },
+        { id: 123, q: "City planners recognize the need for accessible public transport options." },
+        { id: 124, q: "The deadline for the submission of this assignment is tomorrow." },
+        { id: 125, q: "The deadline for the marketing and scientific assignment will be extended." },
+        { id: 126, q: "Having strong motivation is vital for achieving your goal." },
+        { id: 127, q: "Many important policies need to be made." },
+        { id: 128, q: "The internet has transformed the nature of publishing." },
+        { id: 129, q: "British students must study mathematics at secondary schools." },
+        { id: 130, q: "Scholarships are available for both local and international students." },
+        { id: 131, q: "When sentencing, the court will decide whether the defendant regrets his actions." },
+        { id: 132, q: "The research shows that spending time outdoors has a range of benefits." },
+        { id: 133, q: "Experts say learning and listening to music can reduce the stress." },
+        { id: 134, q: "Reading histories involves a process of careful selections." },
+        { id: 135, q: "All students have their own styles of learning." },
+        { id: 136, q: "Career mobility is very important for new graduates." },
+        { id: 137, q: "Technologies have rapidly transformed the lifestyle of the majority." },
+        { id: 138, q: "Many universities provide exchange programs to other countries." },
+        { id: 139, q: "The course will start with the history of architecture." },
+        { id: 140, q: "Many university lectures can now be viewed on the internet." },
+        { id: 141, q: "Every living thing begins as a single cell." },
+        { id: 142, q: "Nutrition plays a key role in athletic performance." },
+        { id: 143, q: "Sugar is a solid carbohydrate which is used to sweeten food." },
+        { id: 144, q: "The night sky has always involved mystery and wonder." },
+        { id: 145, q: "It is interesting to observe the development of the language skills of toddlers." },
+        { id: 146, q: "Urban planning emphasizes the efficiency and expansion of the community." },
+        { id: 147, q: "Students would develop confidence in their ability to think critically." },
+        { id: 148, q: "We are researching the most significant challenges facing our society today." },
+        { id: 149, q: "The history of economics is a tricky subject to study." },
+        { id: 150, q: "The universities provide excellent leisure facilities for students and staff." },
+        { id: 151, q: "It takes a long time to walk to the university." },
+        { id: 152, q: "Providers of higher education treat plagiarism extremely seriously." },
+        { id: 153, q: "Many diseases that were once serious have now been eradicated." },
+        { id: 154, q: "Imported default packages are likely to be used for most computers." },
+        { id: 155, q: "Philosophy uses logic and reason to analyze human experience." },
+        { id: 156, q: "The skills of great stage actors cannot be taught." },
+        { id: 157, q: "Art and design is a competitive field to work in." },
+        { id: 158, q: "The history department is very active in research." },
+        { id: 159, q: "Please return the reference book to the correct position on the shelf." },
+        { id: 160, q: "Extracurricular activities can help students to develop more talents." },
+        { id: 161, q: "The English degree involves certain work placements in the third year." },
+        { id: 162, q: "Critical thinking is one part of a broad education." },
+        { id: 163, q: "The digital camera has some advantages over traditional film." },
+        { id: 164, q: "The government is funding a research study on the consequences of unemployment." },
+        { id: 165, q: "This project is divided into four main sections." },
+        { id: 166, q: "Undergraduates may pursue their specific interests within certificate programs." },
+        { id: 167, q: "Field trips are an essential part of most geography courses." },
+        { id: 168, q: "The library will stay open until midnight this week." },
+        { id: 169, q: "The two sides have disagreed on how to solve the problem." },
+        { id: 170, q: "Babies can distinguish between what is language and what is not." },
+        { id: 171, q: "Psychologists say that what we expect to happen influences our behaviors." },
+        { id: 172, q: "Studying medicine allows for a wide range of career opportunities." },
+        { id: 173, q: "The goal of the government policy is to increase the foreign investment." },
+        { id: 174, q: "Children start producing words before they are able to walk." },
+        { id: 175, q: "The course covers architecture planning and construction on the international scale." },
+        { id: 176, q: "There are many different styles of business management." },
+        { id: 177, q: "Eating fish twice a week is recommended for a healthy diet." },
+        { id: 178, q: "Air pollution is a serious problem all over the world." },
+        { id: 179, q: "Scholarship applications must be handed in by the end of the month." },
+        { id: 180, q: "Studying history can help you better understand the present." },
+        { id: 181, q: "A regional assembly was moved to the devolution of power." },
+        { id: 182, q: "Americans have typically defined the process of plant growth in quantitative terms." },
+        { id: 183, q: "There is a list of dedicated librarians available during teaching time each term." },
+        { id: 184, q: "The stock market crash had repercussions throughout the world." },
+        { id: 185, q: "Biology involves the study of life at all levels." },
+        { id: 186, q: "International exchange formed the important part of our study program." },
+        { id: 187, q: "The quality of your statistical information depends on your raw data." },
+        { id: 188, q: "The researchers are disappointed that the results of the research have been proved to be inconclusive." },
+        { id: 189, q: "Certain organisms can reproduce using just one parent." },
+        { id: 190, q: "Purity is one feature that makes gold expensive." },
+        { id: 191, q: "This book can be borrowed for a maximum of one week." },
+        { id: 192, q: "The academic tradition of the school ensures excellence." },
+        { id: 193, q: "The task tomorrow will require a higher level of skill." },
+        { id: 194, q: "The student shop sells a range of stationery." },
+        { id: 195, q: "Banks charge interest on the money they lend to customers." },
+        { id: 196, q: "Food has become a political issue in the world today." },
+        { id: 197, q: "Implementation figures are expected to improve over the next few years." },
+        { id: 198, q: "Graphs and charts allowed data to be more easily understood." },
+        { id: 199, q: "Too much information may be avoided by good research design." },
+        { id: 200, q: "We can all meet at my office after the lecture." },
+        { id: 201, q: "Undergraduates have a wide range of cultural modules to choose from." },
+        { id: 202, q: "Physics is a key subject for understanding the world and the universe." },
+        { id: 203, q: "Courses are assessed by group work and individual assignments." },
+        { id: 204, q: "Social media is criticized for causing internet addiction." },
+        { id: 205, q: "It helps you to rationally assess your arguments." },
+        { id: 206, q: "Slides and handouts can be downloaded after the lecture." },
+        { id: 207, q: "Even simple techniques need to be practiced to become perfect." },
+        { id: 208, q: "Scientists recognize different ice types according to the water molecule content." },
+        { id: 209, q: "Sound waves are unable to travel through the vacuum." },
+        { id: 210, q: "The job for tomorrow will require higher level skills." },
+        { id: 211, q: "The library will be closed for staff training tomorrow morning." },
+        { id: 212, q: "Make sure you have saved all the files before turning off the computer." },
+        { id: 213, q: "The coffee machine located on the third floor is not working today." },
+        { id: 214, q: "All medical students must clean their hands before entering the room." },
+        { id: 215, q: "Archeologists discovered tools and other artifacts near the ancient tomb." },
+        { id: 216, q: "Key business partners are often involved in shared expense accounts." },
+        { id: 217, q: "We can have a lecture on the morning of Thursday." },
+        { id: 218, q: "New media have transcended traditional national boundaries." },
+        { id: 219, q: "The new technician dropped the microscope in the biology lab." },
+        { id: 220, q: "The garden behind the university is open to the public in summer." },
+        { id: 221, q: "Make sure you choose a course that provides great career opportunities." },
+        { id: 222, q: "Native speakers are exempt from the language tests in their own languages." },
+        { id: 223, q: "Many vocational courses in the institution are funded by private enterprises." },
+        { id: 224, q: "We hold the visiting days throughout this year for all undergraduate students." },
+        { id: 225, q: "Despite their differences, all forms of life share certain characteristics." },
+        { id: 226, q: "The essay will argue that the technology does more harm than good." },
+        { id: 227, q: "The reception staff can give advice on renting private accommodation." },
+        { id: 228, q: "Tutors should set a clear goal at the start of the class." },
+        { id: 229, q: "There are more opportunities to receive the grants in most artistic fields." },
+        { id: 230, q: "The visiting speaker used to be a lecturer in this department." },
+        { id: 231, q: "The site is designed to be highly interactive." },
+        { id: 232, q: "Strangely, people are simultaneously impressed by and skeptical of statistics." },
+        { id: 233, q: "Protective clothing must always be worn in the laboratory." },
+        { id: 234, q: "It would be extremely beneficial to work together." },
+        { id: 235, q: "In his lifetime, he composed a large number of works." },
+        { id: 236, q: "Economic development needs to be supported by the government." },
+        { id: 237, q: "As student union members, you can influence and change our university." },
+        { id: 238, q: "Distance learning allows you to develop a career around your commitments." },
+        { id: 239, q: "You need to hand in the essay next semester." },
+        { id: 240, q: "The new research has produced some other unexpected results." },
+        { id: 241, q: "Art is an expression of creative skills and imagination." },
+        { id: 242, q: "An architect requires problem-solving skills and an eye for design." },
+        { id: 243, q: "Those who are considering a career in marketing should attend the talk." },
+        { id: 244, q: "Travelling by boat on the river is not possible in winter." },
+        { id: 245, q: "The essay is easy to complete once the research is finished." },
+        { id: 246, q: "Understanding how to use the library will save your time." },
+        { id: 247, q: "We need to work together to achieve a high educational standard." },
+        { id: 248, q: "The marketing budget has doubled since the beginning of the year." },
+        { id: 249, q: "The ways in which people communicate are constantly changing." },
+        { id: 250, q: "The lecture tomorrow will discuss the educational policy of the United States." },
+        { id: 251, q: "The exam application system has been upgraded for professional exams." },
+        { id: 252, q: "There is a clear need for further research in this field." },
+        { id: 253, q: "The faculty staff are very approachable, helpful and extremely friendly." },
+        { id: 254, q: "An introduction is an essential element of presentation." },
+        { id: 255, q: "The plight of wildlife has been ignored by local developers." },
+        { id: 256, q: "The railway makes long-distance travel possible for everyone." },
+        { id: 257, q: "The professor took a year off to work on her book." },
+        { id: 258, q: "The summer course was canceled due to insufficient re-enrollments." },
+        { id: 259, q: "The designers will complete the plan later today." },
+        { id: 260, q: "The other book isn't thorough but it's more insightful." },
+        { id: 261, q: "Some people believe that education should be free for all." },
+        { id: 262, q: "She has made a significant contribution to the field of chemistry." },
+        { id: 263, q: "Some departments have their own specialist book collections." },
+        { id: 264, q: "The new camera can identify your eyes and focus on them." },
+        { id: 265, q: "Statistical results should be expressed in different ways depending on the circumstances." },
+        { id: 266, q: "Students are encouraged to think carefully about their accommodation needs." },
+        { id: 267, q: "Textile manufacturing plays a large role in some economies." },
+        { id: 268, q: "She began by giving an outline of the previous lecture." },
+        { id: 269, q: "Our professor is hosting the business development conference." },
+        { id: 270, q: "The bar chart provides a useful means of data comparison." },
+        { id: 271, q: "I will come back to this in a moment." },
+        { id: 272, q: "The archeologist's new discoveries stand out in the previously overlooked foundations." },
+        { id: 273, q: "Recession triggers exciting creativity, according to public wisdom." },
+        { id: 274, q: "It is really a comprehensive program covering both theory and practice." },
+        { id: 275, q: "Parents are financially responsible for their children raised up until they reach adulthood." },
+        { id: 276, q: "The theme of the instrumental work exhibits more of a demure, compositional style." },
+        { id: 277, q: "Making mistakes is fine, as long as you learn from them." },
+        { id: 278, q: "In addition to the class requirements, students must pass all the qualifying examinations." },
+        { id: 279, q: "Students requiring an extension should apply sooner rather than later." },
+        { id: 280, q: "Nurses can specialize in clinical work or management." },
+        { id: 281, q: "Organizational failure is considered from various perspectives in academic literature." },
+        { id: 282, q: "Let me give you an example to explain what I mean." },
+        { id: 283, q: "The theater study courses encourage students to exercise their creativity." },
+        { id: 284, q: "Peer group pressure has a significant effect on young people." },
+        { id: 285, q: "The extent of advertising to children is open to much debate." },
+        { id: 286, q: "Economic problems caused a big rise in unemployment." },
+        { id: 287, q: "A very basic feature of computing would be counting and calculating." },
+        { id: 288, q: "Today a number of students have volunteer jobs." },
+        { id: 289, q: "Although sustainable development is not easy, it is an unavoidable responsibility." },
+        { id: 290, q: "Please click the logo above to enter the site." },
+        { id: 291, q: "Find out how to get your resources before your research." },
+        { id: 292, q: "A good architectural structure should be usable, durable and beautiful." },
+        { id: 293, q: "Every student has both the right and the ability to succeed." },
+        { id: 294, q: "Consumer confidence has a direct influence on sales." },
+        { id: 295, q: "Convincing evidence to support this theory is hard to obtain." },
+        { id: 296, q: "Our view is that all the educational reforms have been inadequately implemented." },
+        { id: 297, q: "Collaboration between departments is a feature of successful companies." },
+        { id: 298, q: "Experts are now able to forecast weather over much longer periods." },
+        { id: 299, q: "The economic strength of early Roman Republic will be examined." },
+        { id: 300, q: "Building trust is not something that can be achieved overnight." },
+        { id: 301, q: "All dissertations must be accompanied by a submission form." },
+        { id: 302, q: "Please confirm that you have received the textbook." },
+        { id: 303, q: "The results of the study underscore the discoveries from early detection." }
+    ];
+
+    let current, practicedCount=0;
+    const totalCountEl=document.getElementById('total-count'), practicedCountEl=document.getElementById('practiced-count');
+    const questionEl=document.getElementById('question'), answerEl=document.getElementById('answer');
+    const showBtn=document.getElementById('show-answer-btn'), nextBtn=document.getElementById('next-btn');
+    const bookmarkBtn=document.getElementById('bookmark-btn'), viewBmBtn=document.getElementById('view-bookmarks-btn');
+    const viewAllBtn=document.getElementById('view-all-btn'), exportBtn=document.getElementById('export-btn');
+    const importFile=document.getElementById('import-file');
+    const bmModal=document.getElementById('bookmark-modal'), allModal=document.getElementById('all-modal');
+    const bmUL=document.getElementById('bookmarked-questions'), allUL=document.getElementById('all-questions');
+
+    function updateSessionInfo(){ practicedCountEl.textContent=practicedCount; totalCountEl.textContent=questions.length; }
+    function getBookmarks(){ return JSON.parse(localStorage.getItem('bookmarks')||'[]'); }
+    function saveBookmarks(b){ localStorage.setItem('bookmarks',JSON.stringify(b)); }
+    function updateBookmarkBtn(){ bookmarkBtn.textContent=getBookmarks().includes(current.id)?'Unbookmark':'Bookmark'; }
+
+    function loadRandom(){
+      practicedCount++; updateSessionInfo();
+      const idx=Math.floor(Math.random()*questions.length); current=questions[idx];
+      questionEl.textContent= idx + '. ' + current.q;
+      if(current.a){ answerEl.textContent=current.a; showBtn.style.display='inline-block'; } else { answerEl.style.display='none'; showBtn.style.display='none'; }
+      answerEl.style.display='none'; showBtn.textContent='Show Answer'; updateBookmarkBtn();
+    }
+
+    showBtn.addEventListener('click',()=>{
+      if(answerEl.style.display==='none'){ answerEl.style.display='block'; showBtn.textContent='Hide Answer'; }
+      else{ answerEl.style.display='none'; showBtn.textContent='Show Answer'; }
+    });
+
+    nextBtn.addEventListener('click',loadRandom);
+
+    bookmarkBtn.addEventListener('click',()=>{
+      const b=getBookmarks(), i=b.indexOf(current.id);
+      if(i>-1) b.splice(i,1); else b.push(current.id);
+      saveBookmarks(b); updateBookmarkBtn();
+    });
+
+    viewBmBtn.addEventListener('click',()=>{
+      bmUL.innerHTML=''; getBookmarks().forEach(id=>{
+        const fq=questions.find(x=>x.id===id);
+        if(fq){ const li=document.createElement('li'); li.textContent=fq.q; li.onclick=()=>{ current=fq; questionEl.textContent=fq.q; if(fq.a){ answerEl.textContent=fq.a; showBtn.style.display='inline-block'; } else showBtn.style.display='none'; answerEl.style.display='none'; updateBookmarkBtn(); bmModal.style.display='none'; }; bmUL.appendChild(li);} });
+      bmModal.style.display='block';
+    });
+    document.getElementById('close-bookmarks-btn').onclick=()=>bmModal.style.display='none';
+
+    viewAllBtn.addEventListener('click',()=>{
+      allUL.innerHTML=''; questions.forEach(q=>{
+        const li=document.createElement('li'); li.textContent=q.q; li.onclick=()=>{ current=q; questionEl.textContent=q.q; if(q.a){ answerEl.textContent=q.a; showBtn.style.display='inline-block'; } else showBtn.style.display='none'; answerEl.style.display='none'; updateBookmarkBtn(); allModal.style.display='none'; }; allUL.appendChild(li);
+      }); allModal.style.display='block';
+    });
+    document.getElementById('close-all-btn').onclick=()=>allModal.style.display='none';
+
+    exportBtn.addEventListener('click',()=>{
+      const data=JSON.stringify(getBookmarks()), blob=new Blob([data],{type:'application/json'}), url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='flashcard_bookmarks.json'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    importFile.addEventListener('change',e=>{ const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ const arr=JSON.parse(r.result); if(Array.isArray(arr)) saveBookmarks(arr); alert('Imported!'); }catch{alert('Invalid format');}}; r.readAsText(file); });
+
+    // init
+    updateSessionInfo(); loadRandom();
+  </script>
+</body>
+</html>
