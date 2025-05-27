@@ -46,6 +46,7 @@
       <button id="next-btn">Next Question</button>
       <button id="view-bookmarks-btn">View Bookmarks</button>
       <button id="view-all-btn">View All Questions</button>
+      <button id="view-unpracticed-btn">View Unpracticed Questions</button>
       <button id="export-btn">Export Bookmarks</button>
       <input type="file" id="import-file" accept="application/json" />
       <label for="import-file" id="import-label">Import Bookmarks</label>
@@ -62,6 +63,12 @@
     <h2>All Questions</h2>
     <ul id="all-questions"></ul>
     <button class="close-btn" id="close-all-btn">Close</button>
+  </div>
+  </div>
+    <div id="unpracticed-modal" class="modal">
+    <h2>Remain Questions</h2>
+    <ul id="unpracticed-questions"></ul>
+    <button class="close-btn" id="close-unpracticed-btn">Close</button>
   </div>
 
   <script>
@@ -167,84 +174,175 @@
         { id:99, q: "99. If telescopes are used to locate distant objects, what instrument is employed to magnify minuscule objects?", a: "Microscope / microscopes" },
         { id:100, q: "100. What is the name of male sheep?", a: "ram" }
     ];
-    let current, practicedCount=0;
-    let practicedSet = new Set();
-    const totalCountEl=document.getElementById('total-count'), practicedCountEl=document.getElementById('practiced-count');
-    const questionEl=document.getElementById('question'), answerEl=document.getElementById('answer');
-    const showBtn=document.getElementById('show-answer-btn'), nextBtn=document.getElementById('next-btn');
-    const bookmarkBtn=document.getElementById('bookmark-btn'), viewBmBtn=document.getElementById('view-bookmarks-btn');
-    const viewAllBtn=document.getElementById('view-all-btn'), exportBtn=document.getElementById('export-btn');
-    const importFile=document.getElementById('import-file');
-    const bmModal=document.getElementById('bookmark-modal'), allModal=document.getElementById('all-modal');
-    const bmUL=document.getElementById('bookmarked-questions'), allUL=document.getElementById('all-questions');
+    let current;
+    const practiceCounts = {};
+    const totalCountEl      = document.getElementById('total-count'),
+          practicedCountEl  = document.getElementById('practiced-count'),
+          questionEl        = document.getElementById('question'),
+          answerEl          = document.getElementById('answer'),
+          showBtn           = document.getElementById('show-answer-btn'),
+          nextBtn           = document.getElementById('next-btn'),
+          bookmarkBtn       = document.getElementById('bookmark-btn'),
+          viewBmBtn         = document.getElementById('view-bookmarks-btn'),
+          viewAllBtn        = document.getElementById('view-all-btn'),
+          viewUnpracBtn     = document.getElementById('view-unpracticed-btn'),
+          exportBtn         = document.getElementById('export-btn'),
+          importFile        = document.getElementById('import-file'),
+          bmModal           = document.getElementById('bookmark-modal'),
+          allModal          = document.getElementById('all-modal'),
+          unpracModal       = document.getElementById('unpracticed-modal'),
+          bmUL              = document.getElementById('bookmarked-questions'),
+          allUL             = document.getElementById('all-questions'),
+          unpracUL          = document.getElementById('unpracticed-questions');
 
     function updateSessionInfo() {
-        practicedCountEl.textContent = practicedSet.size;
-        totalCountEl.textContent = questions.length;
+      practicedCountEl.textContent = Object.keys(practiceCounts).length;
+      totalCountEl.textContent     = questions.length;
     }
-    function getBookmarks(){ return JSON.parse(localStorage.getItem('bookmarks')||'[]'); }
-    function saveBookmarks(b){ localStorage.setItem('bookmarks',JSON.stringify(b)); }
-    function updateBookmarkBtn(){ bookmarkBtn.textContent=getBookmarks().includes(current.id)?'Unbookmark':'Bookmark'; }
+
+    function getBookmarks() {
+      return JSON.parse(localStorage.getItem('bookmarks') || '[]');
+    }
+    function saveBookmarks(b) {
+      localStorage.setItem('bookmarks', JSON.stringify(b));
+    }
+    function updateBookmarkBtn() {
+      bookmarkBtn.textContent = getBookmarks().includes(current.id) ? 'Unbookmark' : 'Bookmark';
+    }
 
     function loadRandom() {
-        const idx = Math.floor(Math.random() * questions.length);
-        current = questions[idx];
+      const idx = Math.floor(Math.random() * questions.length);
+      current = questions[idx];
 
-        // 把这道题标记为“已练”
-        practicedSet.add(current.id);
-        updateSessionInfo();
+      practiceCounts[current.id] = (practiceCounts[current.id] || 0) + 1;
+      updateSessionInfo();
 
-        // 以下不变：渲染题目/答案/书签按钮
-        questionEl.textContent = current.q;
-        if (current.a) {
-            answerEl.textContent = current.a;
-            showBtn.style.display = 'inline-block';
-        } else {
-            answerEl.style.display = 'none';
-            showBtn.style.display = 'none';
-        }
+      questionEl.textContent = current.q;
+      if (current.a) {
+        answerEl.textContent  = current.a;
+        showBtn.style.display = 'inline-block';
+      } else {
         answerEl.style.display = 'none';
-        showBtn.textContent = 'Show Answer';
-        updateBookmarkBtn();
+        showBtn.style.display   = 'none';
+      }
+      answerEl.style.display = 'none';
+      showBtn.textContent    = 'Show Answer';
+      updateBookmarkBtn();
     }
 
-    showBtn.addEventListener('click',()=>{
-      if(answerEl.style.display==='none'){ answerEl.style.display='block'; showBtn.textContent='Hide Answer'; }
-      else{ answerEl.style.display='none'; showBtn.textContent='Show Answer'; }
+    showBtn.addEventListener('click', () => {
+      if (answerEl.style.display === 'none') {
+        answerEl.style.display = 'block';
+        showBtn.textContent    = 'Hide Answer';
+      } else {
+        answerEl.style.display = 'none';
+        showBtn.textContent    = 'Show Answer';
+      }
     });
 
-    nextBtn.addEventListener('click',loadRandom);
+    nextBtn.addEventListener('click', loadRandom);
 
-    bookmarkBtn.addEventListener('click',()=>{
-      const b=getBookmarks(), i=b.indexOf(current.id);
-      if(i>-1) b.splice(i,1); else b.push(current.id);
-      saveBookmarks(b); updateBookmarkBtn();
+    bookmarkBtn.addEventListener('click', () => {
+      const b = getBookmarks(), i = b.indexOf(current.id);
+      if (i > -1) b.splice(i, 1);
+      else b.push(current.id);
+      saveBookmarks(b);
+      updateBookmarkBtn();
     });
 
-    viewBmBtn.addEventListener('click',()=>{
-      bmUL.innerHTML=''; getBookmarks().forEach(id=>{
-        const fq=questions.find(x=>x.id===id);
-        if(fq){ const li=document.createElement('li'); li.textContent=fq.q; li.onclick=()=>{ current=fq; questionEl.textContent=fq.q; if(fq.a){ answerEl.textContent=fq.a; showBtn.style.display='inline-block'; } else showBtn.style.display='none'; answerEl.style.display='none'; updateBookmarkBtn(); bmModal.style.display='none'; }; bmUL.appendChild(li);} });
-      bmModal.style.display='block';
+    viewBmBtn.addEventListener('click', () => {
+      bmUL.innerHTML = '';
+      getBookmarks().forEach(id => {
+        const fq = questions.find(x => x.id === id);
+        if (fq) {
+          const li = document.createElement('li');
+          li.textContent = fq.q;
+          li.onclick = () => {
+            current = fq;
+            questionEl.textContent = fq.q;
+            if (fq.a) {
+              answerEl.textContent  = fq.a;
+              showBtn.style.display = 'inline-block';
+            } else showBtn.style.display = 'none';
+            answerEl.style.display = 'none';
+            updateBookmarkBtn();
+            bmModal.style.display = 'none';
+          };
+          bmUL.appendChild(li);
+        }
+      });
+      bmModal.style.display = 'block';
     });
-    document.getElementById('close-bookmarks-btn').onclick=()=>bmModal.style.display='none';
+    document.getElementById('close-bookmarks-btn').onclick = () => bmModal.style.display = 'none';
 
-    viewAllBtn.addEventListener('click',()=>{
-      allUL.innerHTML=''; questions.forEach(q=>{
-        const li=document.createElement('li'); li.textContent=q.q; li.onclick=()=>{ current=q; questionEl.textContent=q.q; if(q.a){ answerEl.textContent=q.a; showBtn.style.display='inline-block'; } else showBtn.style.display='none'; answerEl.style.display='none'; updateBookmarkBtn(); allModal.style.display='none'; }; allUL.appendChild(li);
-      }); allModal.style.display='block';
+    viewAllBtn.addEventListener('click', () => {
+      allUL.innerHTML = '';
+      questions.forEach(q => {
+        const cnt = practiceCounts[q.id] || 0;
+        const li = document.createElement('li');
+        li.textContent = "[" + cnt + "] " + q.q;
+        li.onclick = () => {
+          current = q;
+          questionEl.textContent = q.q;
+          if (q.a) {
+            answerEl.textContent  = q.a;
+            showBtn.style.display = 'inline-block';
+          } else showBtn.style.display = 'none';
+          answerEl.style.display = 'none';
+          updateBookmarkBtn();
+          allModal.style.display = 'none';
+        };
+        allUL.appendChild(li);
+      });
+      allModal.style.display = 'block';
     });
-    document.getElementById('close-all-btn').onclick=()=>allModal.style.display='none';
+    document.getElementById('close-all-btn').onclick = () => allModal.style.display = 'none';
 
-    exportBtn.addEventListener('click',()=>{
-      const data=JSON.stringify(getBookmarks()), blob=new Blob([data],{type:'application/json'}), url=URL.createObjectURL(blob);
-      const a=document.createElement('a'); a.href=url; a.download='flashcard_bookmarks.json'; a.click(); URL.revokeObjectURL(url);
+    viewUnpracBtn.addEventListener('click', () => {
+      unpracUL.innerHTML = '';
+      questions.filter(q => !(practiceCounts[q.id] > 0)).forEach(q => {
+        const li = document.createElement('li');
+        li.textContent = q.q;
+        li.onclick = () => {
+          current = q;
+          questionEl.textContent = q.q;
+          if (q.a) {
+            answerEl.textContent  = q.a;
+            showBtn.style.display = 'inline-block';
+          } else showBtn.style.display = 'none';
+          answerEl.style.display = 'none';
+          updateBookmarkBtn();
+          unpracModal.style.display = 'none';
+        };
+        unpracUL.appendChild(li);
+      });
+      unpracModal.style.display = 'block';
+    });
+    document.getElementById('close-unpracticed-btn').onclick = () => unpracModal.style.display = 'none';
+
+    exportBtn.addEventListener('click', () => {
+      const data = JSON.stringify(getBookmarks()), blob = new Blob([data], {type:'application/json'}), url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'flashcard_bookmarks.json'; a.click(); URL.revokeObjectURL(url);
     });
 
-    importFile.addEventListener('change',e=>{ const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ const arr=JSON.parse(r.result); if(Array.isArray(arr)) saveBookmarks(arr); alert('Imported!'); }catch{alert('Invalid format');}}; r.readAsText(file); });
+    importFile.addEventListener('change', e => {
+      const file = e.target.files[0]; if (!file) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const arr = JSON.parse(r.result);
+          if (Array.isArray(arr)) saveBookmarks(arr);
+          alert('Imported!');
+        } catch {
+          alert('Invalid format');
+        }
+      };
+      r.readAsText(file);
+    });
 
     // init
-    updateSessionInfo(); loadRandom();
+    updateSessionInfo();
+    loadRandom();
   </script>
 </body>
 </html>
