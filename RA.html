@@ -119,6 +119,7 @@
     ];
 
     let current, practicedCount=0;
+    let practicedSet = new Set();
     const totalCountEl=document.getElementById('total-count'), practicedCountEl=document.getElementById('practiced-count');
     const questionEl=document.getElementById('question'), answerEl=document.getElementById('answer');
     const showBtn=document.getElementById('show-answer-btn'), nextBtn=document.getElementById('next-btn');
@@ -128,17 +129,34 @@
     const bmModal=document.getElementById('bookmark-modal'), allModal=document.getElementById('all-modal');
     const bmUL=document.getElementById('bookmarked-questions'), allUL=document.getElementById('all-questions');
 
-    function updateSessionInfo(){ practicedCountEl.textContent=practicedCount; totalCountEl.textContent=questions.length; }
+    function updateSessionInfo() {
+        practicedCountEl.textContent = practicedSet.size;
+        totalCountEl.textContent = questions.length;
+    }
     function getBookmarks(){ return JSON.parse(localStorage.getItem('bookmarks')||'[]'); }
     function saveBookmarks(b){ localStorage.setItem('bookmarks',JSON.stringify(b)); }
     function updateBookmarkBtn(){ bookmarkBtn.textContent=getBookmarks().includes(current.id)?'Unbookmark':'Bookmark'; }
 
-    function loadRandom(){
-      practicedCount++; updateSessionInfo();
-      const idx=Math.floor(Math.random()*questions.length); current=questions[idx];
-      questionEl.textContent=current.q;
-      if(current.a){ answerEl.textContent=current.a; showBtn.style.display='inline-block'; } else { answerEl.style.display='none'; showBtn.style.display='none'; }
-      answerEl.style.display='none'; showBtn.textContent='Show Answer'; updateBookmarkBtn();
+    function loadRandom() {
+        const idx = Math.floor(Math.random() * questions.length);
+        current = questions[idx];
+
+        // 把这道题标记为“已练”
+        practicedSet.add(current.id);
+        updateSessionInfo();
+
+        // 以下不变：渲染题目/答案/书签按钮
+        questionEl.textContent = current.q;
+        if (current.a) {
+            answerEl.textContent = current.a;
+            showBtn.style.display = 'inline-block';
+        } else {
+            answerEl.style.display = 'none';
+            showBtn.style.display = 'none';
+        }
+        answerEl.style.display = 'none';
+        showBtn.textContent = 'Show Answer';
+        updateBookmarkBtn();
     }
 
     showBtn.addEventListener('click',()=>{
