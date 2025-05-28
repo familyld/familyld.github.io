@@ -433,7 +433,7 @@
       practiceCounts[current.id] = (practiceCounts[current.id] || 0) + 1;
       updateSessionInfo();
 
-      questionEl.textContent = current.q;
+      questionEl.textContent = current.id + ". " + current.q;
       if (current.a) {
         answerEl.textContent  = current.a;
         showBtn.style.display = 'inline-block';
@@ -472,10 +472,10 @@
         const fq = questions.find(x => x.id === id);
         if (fq) {
           const li = document.createElement('li');
-          li.textContent = fq.q;
+          li.textContent = fq.id + ". " + fq.q;
           li.onclick = () => {
             current = fq;
-            questionEl.textContent = fq.q;
+            questionEl.textContent = fq.id + ". " + fq.q;
             if (fq.a) {
               answerEl.textContent  = fq.a;
               showBtn.style.display = 'inline-block';
@@ -496,10 +496,10 @@
       questions.forEach(q => {
         const cnt = practiceCounts[q.id] || 0;
         const li = document.createElement('li');
-        li.textContent = "[" + cnt + "] " + q.q;
+        li.textContent = "[" + cnt + "] " + q.id + ". " + q.q;
         li.onclick = () => {
           current = q;
-          questionEl.textContent = q.q;
+          questionEl.textContent = q.id + ". " + q.q;
           if (q.a) {
             answerEl.textContent  = q.a;
             showBtn.style.display = 'inline-block';
@@ -518,10 +518,10 @@
       unpracUL.innerHTML = '';
       questions.filter(q => !(practiceCounts[q.id] > 0)).forEach(q => {
         const li = document.createElement('li');
-        li.textContent = q.q;
+        li.textContent = q.id + ". " + q.q;
         li.onclick = () => {
           current = q;
-          questionEl.textContent = q.q;
+          questionEl.textContent = q.id + ". " + q.q;
           if (q.a) {
             answerEl.textContent  = q.a;
             showBtn.style.display = 'inline-block';
