@@ -44,6 +44,7 @@
     </div>
     <div style="margin-top:1rem;">
       <button id="next-btn">Next Question</button>
+      <button id="mode-btn">Mode: Random</button>
       <button id="view-bookmarks-btn">View Bookmarks</button>
       <button id="view-all-btn">View All Questions</button>
       <button id="view-unpracticed-btn">View Unpracticed Questions</button>
@@ -394,6 +395,8 @@
 
     ];
 
+    let mode = 'random'; // 另一个值为 'sequential'
+    let seqIndex = 0;
     let current;
     const practiceCounts = {};
     const totalCountEl      = document.getElementById('total-count'),
@@ -430,25 +433,35 @@
       bookmarkBtn.textContent = getBookmarks().includes(current.id) ? 'Unbookmark' : 'Bookmark';
     }
 
-    function loadRandom() {
-      const idx = Math.floor(Math.random() * questions.length);
-      current = questions[idx];
+    function loadNextQuestion() {
+        if (mode === 'random') {
+            const idx = Math.floor(Math.random() * questions.length);
+            current = questions[idx];
+        } else {
+            current = questions[seqIndex];
+            seqIndex = (seqIndex + 1) % questions.length;
+        }
 
-      practiceCounts[current.id] = (practiceCounts[current.id] || 0) + 1;
-      updateSessionInfo();
+        practiceCounts[current.id] = (practiceCounts[current.id] || 0) + 1;
+        updateSessionInfo();
 
-      questionEl.textContent = current.id + ". " + current.q;
-      if (current.a) {
-        answerEl.textContent  = current.a;
-        showBtn.style.display = 'inline-block';
-      } else {
+        questionEl.textContent = current.q;
+        if (current.a) {
+            answerEl.textContent  = current.a;
+            showBtn.style.display = 'inline-block';
+        } else {
+            showBtn.style.display = 'none';
+        }
         answerEl.style.display = 'none';
-        showBtn.style.display   = 'none';
-      }
-      answerEl.style.display = 'none';
-      showBtn.textContent    = 'Show Answer';
-      updateBookmarkBtn();
+        showBtn.textContent = 'Show Answer';
+        updateBookmarkBtn();
     }
+
+    const modeBtn = document.getElementById('mode-btn');
+        modeBtn.addEventListener('click', () => {
+        mode = mode === 'random' ? 'sequential' : 'random';
+        modeBtn.textContent = 'Mode: ' + (mode === 'random' ? 'Random' : 'Sequential');
+    });
 
     showBtn.addEventListener('click', () => {
       if (answerEl.style.display === 'none') {
@@ -460,7 +473,8 @@
       }
     });
 
-    nextBtn.addEventListener('click', loadRandom);
+    nextBtn.addEventListener('click', loadNextQuestion);
+
 
     bookmarkBtn.addEventListener('click', () => {
       const b = getBookmarks(), i = b.indexOf(current.id);
@@ -476,10 +490,10 @@
         const fq = questions.find(x => x.id === id);
         if (fq) {
           const li = document.createElement('li');
-          li.textContent = fq.id + ". " + fq.q;
+          li.textContent = fq.q;
           li.onclick = () => {
             current = fq;
-            questionEl.textContent = fq.id + ". " + fq.q;
+            questionEl.textContent = fq.q;
             if (fq.a) {
               answerEl.textContent  = fq.a;
               showBtn.style.display = 'inline-block';
@@ -500,10 +514,10 @@
       questions.forEach(q => {
         const cnt = practiceCounts[q.id] || 0;
         const li = document.createElement('li');
-        li.textContent = "[" + cnt + "] " + q.id + ". " + q.q;
+        li.textContent = "[" + cnt + "] " + q.q;
         li.onclick = () => {
           current = q;
-          questionEl.textContent = q.id + ". " + q.q;
+          questionEl.textContent = q.q;
           if (q.a) {
             answerEl.textContent  = q.a;
             showBtn.style.display = 'inline-block';
@@ -522,10 +536,10 @@
       unpracUL.innerHTML = '';
       questions.filter(q => !(practiceCounts[q.id] > 0)).forEach(q => {
         const li = document.createElement('li');
-        li.textContent = q.id + ". " + q.q;
+        li.textContent = q.q;
         li.onclick = () => {
           current = q;
-          questionEl.textContent = q.id + ". " + q.q;
+          questionEl.textContent = q.q;
           if (q.a) {
             answerEl.textContent  = q.a;
             showBtn.style.display = 'inline-block';
@@ -562,8 +576,9 @@
 
     // init
     updateSessionInfo();
-    loadRandom();
+    loadNextQuestion();
   </script>
 </body>
 </html>
+
 

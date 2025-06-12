@@ -44,6 +44,7 @@
     </div>
     <div style="margin-top:1rem;">
       <button id="next-btn">Next Question</button>
+      <button id="mode-btn">Mode: Random</button>
       <button id="view-bookmarks-btn">View Bookmarks</button>
       <button id="view-all-btn">View All Questions</button>
       <button id="view-unpracticed-btn">View Unpracticed Questions</button>
@@ -185,6 +186,8 @@
         { id: 110, q: "110. You can pay using cash or a credit card." },
         { id: 111, q: "111. There is a pharmacy on campus near the store." },     
     ];
+    let mode = 'random'; // 另一个值为 'sequential'
+    let seqIndex = 0;
     let current;
     const practiceCounts = {};
     const totalCountEl      = document.getElementById('total-count'),
@@ -221,25 +224,35 @@
       bookmarkBtn.textContent = getBookmarks().includes(current.id) ? 'Unbookmark' : 'Bookmark';
     }
 
-    function loadRandom() {
-      const idx = Math.floor(Math.random() * questions.length);
-      current = questions[idx];
+    function loadNextQuestion() {
+        if (mode === 'random') {
+            const idx = Math.floor(Math.random() * questions.length);
+            current = questions[idx];
+        } else {
+            current = questions[seqIndex];
+            seqIndex = (seqIndex + 1) % questions.length;
+        }
 
-      practiceCounts[current.id] = (practiceCounts[current.id] || 0) + 1;
-      updateSessionInfo();
+        practiceCounts[current.id] = (practiceCounts[current.id] || 0) + 1;
+        updateSessionInfo();
 
-      questionEl.textContent = current.q;
-      if (current.a) {
-        answerEl.textContent  = current.a;
-        showBtn.style.display = 'inline-block';
-      } else {
+        questionEl.textContent = current.q;
+        if (current.a) {
+            answerEl.textContent  = current.a;
+            showBtn.style.display = 'inline-block';
+        } else {
+            showBtn.style.display = 'none';
+        }
         answerEl.style.display = 'none';
-        showBtn.style.display   = 'none';
-      }
-      answerEl.style.display = 'none';
-      showBtn.textContent    = 'Show Answer';
-      updateBookmarkBtn();
+        showBtn.textContent = 'Show Answer';
+        updateBookmarkBtn();
     }
+
+    const modeBtn = document.getElementById('mode-btn');
+        modeBtn.addEventListener('click', () => {
+        mode = mode === 'random' ? 'sequential' : 'random';
+        modeBtn.textContent = 'Mode: ' + (mode === 'random' ? 'Random' : 'Sequential');
+    });
 
     showBtn.addEventListener('click', () => {
       if (answerEl.style.display === 'none') {
@@ -251,7 +264,8 @@
       }
     });
 
-    nextBtn.addEventListener('click', loadRandom);
+    nextBtn.addEventListener('click', loadNextQuestion);
+
 
     bookmarkBtn.addEventListener('click', () => {
       const b = getBookmarks(), i = b.indexOf(current.id);
@@ -353,7 +367,8 @@
 
     // init
     updateSessionInfo();
-    loadRandom();
+    loadNextQuestion();
   </script>
 </body>
 </html>
+
